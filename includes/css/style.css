@@ -1,0 +1,124 @@
+/*
+* 
+*/
+html, body {
+	height: 100%;
+	overflow-x: hidden;
+}
+body {
+	background: transparent;
+	margin: 0;	
+	padding: 0;
+	font-family: Tahoma, 'Open Sans', sans-serif;
+	color: #000;
+}
+* {
+	box-sizing: border-box;
+	color: inherit;
+	text-decoration: none;
+}
+h1, h2, h3 {
+	font-family: 'Roboto', sans-serif;
+	font-weight: bold;
+}
+h1, h2, h3, p {
+	padding: 0;
+	margin: 0;
+}
+
+.header-menu {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background-color: LightGreen;
+}
+
+.ul-menu {
+	font-size: 1.5em;
+	font-weight: 900;
+	color: white;
+}
+
+header {
+	border: 0px solid black; 
+	height: 80px; 
+	width: 100%; 
+	background-color: powderblue; 
+	margin-top: 40px;
+}
+header p {
+	margin-top: 7px;
+	padding: 10px 5px;
+	font-size: 3.0em;
+	font-weight: 700;
+}
+
+.fix_footer {
+	position: static;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 80px;
+	background: powderblue;
+	text-align: center;
+	color: black;
+	font-size: 2em;
+	font-weight: 700;
+	padding-top: 20px;
+	margin-top: 10px;
+}
+
+.spanhr {	
+	font-weight: bold;
+	font-size: 1.1em;
+}
+
+
+.panel-body .btn:not(.btn-block) { 
+	width: 120px;
+	margin-bottom: 10px; 
+}
+.btn-alto {
+	height: 140px;
+	margin:  10px 20px;
+}
+.btn-alto p {
+	margin-left: -7px;
+	text-align: center;
+}
+
+.simbolo {
+	border: 1px solid white; 
+	width: 50px; 
+	height: 60px; 
+	border-radius: 20px; 
+	background-color: #e1e1e1; 
+	margin-top: 10px;
+	margin-left: 17px;
+	padding-top: 5px;"
+}
+.simbolo span {
+	color: #000;
+	font-size: 1.8em;
+}
+
+.linha-btn a p {
+	color: #000;
+}
+
+.linha-lai {
+ 	margin:  10px 48px;
+	font-size: 1.3em; 	
+}
+.linha-lai p {
+	font-size: 0.6em; 	
+}
+
+.linha-system {
+	margin:  10px 30px;
+	font-size: 1.3em;
+}
+.linha-system p {
+	font-size: 0.6em;
+}
