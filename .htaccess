@@ -1,0 +1,7 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /avaleea/index.php?$1 [L]
+RewriteCond %{HTTP_HOST} ^localhost\/avaleea$
+RewriteCond $1 !^(index\.php|css|includes|img|uploads|robots‌\​.txt)
+RewriteRule ^/?$ "http(s)?:\/\/localhost\/avaleea\/" [R=301,L]
