@@ -7,6 +7,10 @@ class home extends CI_Controller {
 
         parent::__construct();                        
 
+	    $var = $this->session->userdata("external_questions");
+    	$external_questions = isset($var) ? $var : FALSE;
+		if ($external_questions) { $this->session->set_userdata("logged", '0'); }
+
 		$this->session->set_userdata("external_questions", FALSE);
         $this->session->set_userdata("external_test", FALSE);
     }
@@ -14,7 +18,9 @@ class home extends CI_Controller {
 	public function index() {
 		//error_reporting(E_ALL);
 		//ini_set('display_errors', '1');
-
+		$this->session->set_userdata("external_questions", FALSE);
+        $this->session->set_userdata("external_test", FALSE);
+		
 		$this->session->set_userdata("source", 'home');
 		
 	    $var = $this->session->userdata("logged");
@@ -81,15 +87,18 @@ class home extends CI_Controller {
 	}
     
 	public function external_questions() {
-			
+		
+		$this->session->set_userdata("source", 'external_question');	
 		$this->session->set_userdata("external_questions", TRUE);
+		$this->session->set_userdata("save_questions_external", 0);
 								
         $data['name_view'] = 'v_home';
         $this->load->view('v_layout', $data);
 	}
     
 	public function external_test() {
-			
+		
+		$this->session->set_userdata("source", 'external_test');	
 		$this->session->set_userdata("external_test", TRUE);
 		echo "<br /> <br /> External Test <br />";	
 	}

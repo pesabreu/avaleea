@@ -50,9 +50,9 @@
 <body onload="$('#login').focus()" style="padding-top: 50px;">
 
     <div id="imagem">
-        <!-- <?php echo "base => ".base_url(); ?> -->    
-        <!-- <?php echo "logo => ". $logotipo; ?> -->        
-        <!-- <img src="<?php echo isset($logotipo) ? $logotipo : '' ?>" class="img-responsive" alt="Responsive image" /> -->
+        <!-- <?php //echo "base => ".base_url(); ?> -->    
+        <!-- <?php //echo "logo => ". $logotipo; ?> -->        
+        <!-- <img src="<?php //echo isset($logotipo) ? $logotipo : '' ?>" class="img-responsive" alt="Responsive image" /> -->
     </div>
                 
     <div class="container">        

@@ -5,6 +5,7 @@
 	
 	define("URL_IMG_REAL", "C:\\wamp64\\www\\avaleea\\includes\\img\\");	
 	define("URL_UPL_REAL", "C:\\wamp64\\www\\avaleea\\uploads\\");
+	define("URL_UPL_QUESTIONS", "C:\\wamp64\\www\\avaleea\\uploads\\temp_questions\\");
 	
 	
 	function __logged() {
@@ -234,8 +235,28 @@
         
         return $data;                    
     }
+
+    //Essa função gera um valor de String aleatório do tamanho recebido por parametro($size)
+    function randString($size){
+        //String com valor possíveis do resultado, os caracteres pode ser adicionado ou retirados conforme sua necessidade
+        $basic = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
+
+        $return= "";
+
+        for($count= 0; $size > $count; $count++){
+            //Gera um caracter aleatorio
+            $return .= $basic[rand(0, strlen($basic) - 1)];
+        }
+
+        return $return;
+
+    	//Imprime uma String randônica com 20 caracteres
+		//echo randString(20);
+    }
 	
-	 function escolaridade($id) {
+	
+	
+	function escolaridade($id) {
 		
 		$id_escol = intval($id); 
 

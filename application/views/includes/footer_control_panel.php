@@ -4,7 +4,7 @@
 
 
   <!-- Main Footer -->
-  <footer class="main-footer">
+  <footer class="main-footer" style="display: block;">
     <!-- To the right -->
     <div class="pull-right hidden-xs">
       Questionnaries System Online
@@ -14,7 +14,7 @@
   </footer>
 
   <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
+  <aside class="control-sidebar control-sidebar-dark" style="display: block;">
     <!-- Create the tabs -->
     <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
       <li class="active"><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>

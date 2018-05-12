@@ -16,19 +16,17 @@
 	<section id="main_page">	
 		
 		<?php 
-			if (! $logged) {
-				if ( $external_questions || $external_test ) {
-					include "includes/external_page.php";		// show external page
-		
-				} else {
-					include "includes/main_page.php";		// show main page
-				}										
-			}
-	
-			if ($logged) {	
-				//include "includes/menu.php";			// show administrative menu			
+			if ( $external_questions || $external_test ) {
+				include_once "includes/external_page.php";		// show external page
 			
-				include "v_control_panel.php";			// show administrative menu				
+			} else {						
+				if ( $logged ) {		
+					//include "includes/menu.php";				// show administrative menu			
+					include_once "v_control_panel.php";			// show new administrative menu
+					
+				} else {										// $logged == FALSE												
+					include_once "includes/main_page.php";		// show main page
+				}
 			}
 		?>
 		

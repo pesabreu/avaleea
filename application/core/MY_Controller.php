@@ -13,6 +13,14 @@ class MY_Controller extends CI_Controller {
 			$this->session->set_userdata("logged", '1');
 		}
 
+		$var = $this->session->userdata("external_questions");
+		$external_questions = isset($var) ? $this->session->userdata("external_questions") : FALSE;
+
+		if ($external_questions) {
+			$this->session->set_userdata("logged", '1');
+			$this->session->set_userdata("source", 'external_question');
+		}
+
 		$logged = $this->session->userdata("logged");		    
         if ($logged != 1) {        				
             redirect(base_url('login'));

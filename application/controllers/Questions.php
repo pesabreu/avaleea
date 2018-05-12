@@ -297,7 +297,7 @@ class questions extends MY_controller {
 *
 *		Method of tbcfg_questions
 *  
- * **************************************************************************************************/
+* **************************************************************************************************/
     
     public function edit_cfg_questions($id_questions = 0) {
 
@@ -339,5 +339,178 @@ class questions extends MY_controller {
         
         echo json_encode($return);            
     }
+
+	
+
+/**************************************************************************************************
+*
+*		Method of questions external
+*  
+* **************************************************************************************************/
+
+
+	public function save_external() {
+		ini_set('display_errors', 1);
+		error_reporting(E_ALL);
+
+		$tot_bytes = 0;
+		$dir = "c:/wamp64/www/avaleea/uploads/temp_questions/";
+		//$dir = "../uploads/temp_questions/";
+				
+		$qty_question =	$this->session->userdata("save_questions_external");
+		$nro_question = $qty_question + 1;
+		
+		if ($qty_question == 0) {
+			$name_file = randString(12) ."_". date("y-m-d") .".avl";
+			$this->session->set_userdata("name_file", $name_file);
+			
+			$fp = fopen(URL_UPL_QUESTIONS.$name_file, "w");
+			if (!$fp) {
+				 return FALSE; 
+			}
+		
+		} else {
+			$arquivo = $this->session->userdata("name_file");	
+			$fp = fopen($dir.$arquivo, "a");
+		}
+		
+	    $type_question = $this->input->post("chosen_option");
+		$linha = "[ start - ". $type_question ." - ". str_pad($nro_question, 3, "0", STR_PAD_LEFT) ." ]";
+		$tot_bytes += fwrite($fp, $linha ."\r\n");
+		
+		$text_statement = $this->input->post("text-statement");
+		$tot_bytes += fwrite($fp, "stt - ". $text_statement ."\r\n\r\n");		
+		
+		switch ($type_question) {
+			case 'mc':
+				$answer1 = trim($this->input->post("answer1"));
+				$tot_bytes += fwrite($fp, "asw1 - ". $answer1 ."\r\n");
+				
+				$answer2 = trim($this->input->post("answer2"));
+				$tot_bytes += fwrite($fp, "asw2 - ". $answer2 ."\r\n");
+				
+				$var = $this->input->post("answer3");
+				$answer3 = isset($var) ? trim($var) : '';
+				if ($answer3 != '' && substr(trim($answer3), 0, 6) != "Option") {
+					$tot_bytes += fwrite($fp, "asw3 - ". $answer3 ."\r\n");
+				}
+								
+				$var = $this->input->post("answer4");
+				$answer4 = isset($var) ? trim($var) : '';
+				if ($answer4 != '' && substr(trim($answer4), 0, 6) != "Option") {
+					$tot_bytes += fwrite($fp, "asw4 - ". $answer4 ."\r\n"); 
+				}
+				
+				$var = $this->input->post("answer5");
+				$answer5 = isset($var) ? trim($var) : '';
+				if ($answer5 != '' && substr(trim($answer5), 0, 6) != "Option") {
+					$tot_bytes += fwrite($fp, "asw5 - ". $answer5 ."\r\n"); 
+				}
+				
+				$right_wrong = $this->input->post("right-wrong");
+				$tot_bytes += fwrite($fp, $right_wrong ."\r\n");
+				
+				break;
+
+			case 'tf':
+				$issue1 = trim($this->input->post("issue1"));				
+				$issue_tf1 = trim($this->input->post("issue-tf1"));
+				$linha = $issue1 ." - ". $issue_tf1;
+				$tot_bytes += fwrite($fp, "iss1 - ". $linha ."\r\n");
+
+				$issue2 = trim($this->input->post("issue2"));
+				$issue_tf2 = trim($this->input->post("issue-tf2"));
+				$linha = $issue2 ." - ". $issue_tf2;
+				$tot_bytes += fwrite($fp, "iss2 - ". $linha ."\r\n");
+
+				$var = $this->input->post("issue3");
+				$issue3 = isset($var) ? trim($var) : '';
+				$var = $this->input->post("issue-tf3");
+				$issue_tf3 = isset($var) ? trim($var)  : '';
+				if (($issue3 != '') && ($issue_tf3 != '') && (substr(trim($issue_tf3), 0, 5) != "Issue") )
+					$linha = $issue3 ." - ". $issue_tf3; {
+					$tot_bytes += fwrite($fp, "iss3 - ". $linha ."\r\n"); 
+				}
+								
+				$var = $this->input->post("issue4");
+				$issue4 = isset($var) ? trim($var) : '';
+				$var = $this->input->post("issue-tf4");
+				$issue_tf4 = isset($var) ? trim($var) : '';
+				if (($issue4 != '') && ($issue_tf4 != '') && (substr(trim($issue_tf4), 0, 5) != "Issue") )
+					$linha = $issue4 ." - ". $issue_tf4; {
+					$tot_bytes += fwrite($fp, "iss4 - ". $linha ."\r\n"); 
+				}
+
+				$var = $this->input->post("issue5");
+				$issue5 = isset($var) ? trim($var) : '';
+				$var = $this->input->post("issue-tf5");
+				$issue_tf5 = isset($var) ? trim($var) : '';
+				if (($issue5 != '') && ($issue_tf5 != '') && (substr(trim($issue_tf5), 0, 5) != "Issue") )
+					$linha = $issue5 ." - ". $issue_tf5; {
+					$tot_bytes += fwrite($fp, "iss5 - ". $linha ."\r\n"); 
+				}
+			
+				break;
+
+			case 'fg':
+				$qty_gap = trim($this->input->post("inlineRadioOptions"));
+				$tot_bytes += fwrite($fp, "qty - ". $qty_gap ."\r\n"); 
+				
+				$part_fg1 = trim($this->input->post("part-fg1"));
+				$tot_bytes += fwrite($fp, "pt1 - ". $part_fg1 ."\r\n");
+				
+				$gap_fg1 = trim($this->input->post("gap-fg1"));
+				$tot_bytes += fwrite($fp, "gp1 - ". $gap_fg1 ."\r\n");
+				
+				$part_fg_last = trim($this->input->post("part-fg-last"));
+				$tot_bytes += fwrite($fp, "lst - ". $part_fg_last ."\r\n");
+
+				$var = $this->input->post("part-fg2");
+				$part_fg2 = isset($var) ? trim($var) : '';
+				if ($part_fg2 != '' && substr(trim($part_fg2), 0, 6) != "Second") {
+					$tot_bytes += fwrite($fp, "pt2 - ". $part_fg2 ."\r\n"); 
+				}
+				
+				$var = $this->input->post("gap-fg2");
+				$gap_fg2 = isset($var) ? trim($var)  : '';
+				if ($gap_fg2 != '' && substr(trim($gap_fg2), 0, 6) != "Second") {
+					$tot_bytes += fwrite($fp, "gp2 - ". $gap_fg2 ."\r\n"); 
+				}
+
+				$var = $this->input->post("part-fg3");
+				$part_fg3 = isset($var) ? trim($var) : '';
+				if ($part_fg3 != '' && substr(trim($part_fg3), 0, 5) != "Third") {
+					$tot_bytes += fwrite($fp, "pt3 - ". $part_fg3 ."\r\n"); 
+				}
+
+				$var = $this->input->post("gap-fg3");
+				$gap_fg3 = isset($var) ? trim($var)  : '';
+				if ($gap_fg3 != '' && substr(trim($gap_fg3), 0, 5) != "Third") {
+					$tot_bytes += fwrite($fp, "gp3 - ". $gap_fg3 ."\r\n"); 
+				}				
+			
+				break;
+
+			case 'sq':
+				$text_sq = trim($this->input->post("text-sq"));
+				$tot_bytes += fwrite($fp, "sbq - ". $text_sq ."\r\n");
+
+			default:
+				
+				break;
+		}
+		
+		$linha = "[ end - ".  ($tot_bytes + 20)    ." ]\r\n";
+		$tot_bytes += fwrite($fp, $linha);
+		
+		$tot_bytes += fwrite($fp, "\r\n");
+		fclose($fp);
+		
+		$this->session->set_userdata("save_questions_external", $nro_question);
+		$total_questions = str_pad($nro_question, 3, "0", STR_PAD_LEFT); 
+		
+		//echo "Fim =>";
+		echo "Total saved questions: " .$total_questions;		
+	}
 
 }
