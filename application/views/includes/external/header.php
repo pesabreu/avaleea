@@ -25,6 +25,19 @@
 
 <body>
 
+<?php 
+	//$usuario = "pesabreu@pesabreu.com";
+		
+    $var = $this->session->userdata("logged");
+	$logged = isset($var) ? $var : "0";
+	$usuario = 'Not logged in';
+
+	if ($logged == "2" || $logged == "3") {	
+	    $var = $this->session->userdata("name_user");
+   		$usuario = isset($var) ? (trim($var) != "") ? $var : 'User name missing' : 'Not logged in';	
+	}		 	
+?>
+
     <div class="container-fluid">
 
 			<div class="row">
@@ -42,7 +55,7 @@
 					<div class="collapse navbar-collapse ml-1 px-5" id="navbarsavaleea">
 						<ul class="navbar-nav mr-auto h5 px-5" style="margin-left: 50px; padding: 0 10px;">
 							<li class="nav-item active mx-3">
-							<a class="nav-link" style="color: #fff;" href="#">Home <span class="sr-only">(current)</span></a>
+							<a class="nav-link" style="color: #fff;" href="<?= base_url() ?>">Home <span class="sr-only">(current)</span></a>
 							</li>
 							<li class="nav-item mx-3">
 							<a class="nav-link" style="color: #fff;" href="#">Questions</a>
@@ -51,21 +64,23 @@
 							<a class="nav-link" style="color: #fff;" href="#">Tests</a>
 							</li>
 							<li class="nav-item dropdown mx-3">
-							<a class="nav-link dropdown-toggle" style="color: #fff;" href="http://example.com" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sign in</a>
+							<a class="nav-link dropdown-toggle" style="color: #fff;" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sign in</a>
 							<div class="dropdown-menu" aria-labelledby="dropdown04">
-								<a class="dropdown-item" style="color: #000;" href="#">Login</a>
-								<a class="dropdown-item" style="color: #000;" href="#">Logout</a>
-								<a class="dropdown-item" style="color: #000;" href="#">Sign Up</a>
+								<a class="dropdown-item" style="color: #000;" href="#" data-toggle="modal" data-target="#modal_signin">Login</a>
+								<a class="dropdown-item" style="color: #000;" href="<?= base_url('login/logout') ?>">Logout</a>
+								<a class="dropdown-item" style="color: #000;" href="#" data-toggle="modal" data-target="#modal_signup">Sign Up</a>
 							</div>
 							</li>
 						</ul>
 
+						<div id="username" name="username" style="color: #FFF;"> Username: &nbsp; <span style="font-weight: 800;"> <?= $usuario ?> </span> </div>
+<!--
 						<form class="form-inline my-2 my-md-0" method="GET" action="http://www.google.com/search" style="margin-right: -50px;">
 							<input type="hidden" name="sitesearch" value="http://localhost/desenv/bootstrap4/bootstrap-4-rev-2-master/">
 							<input class="form-control" type="text" placeholder="type here">
 							<input type="submit" value="Search" class="btn btn-light ml-1">
 						</form>
-						
+-->						
 					</div>
 				</nav>
 			</div>

@@ -13,7 +13,7 @@
 	$email_guest = $this->session->userdata('email_guest');
 	$email_guest = isset($email_guest) ? $email_guest : '0';					
 	if ($email_guest == '1') {
-		$this->session->set_userdata("logged", '0') ;
+		//$this->session->set_userdata("logged", '0') ;
 		$this->session->set_userdata('email_guest','0');
 	}						
 									

@@ -7,7 +7,31 @@
 
 		type_question();
 		disabled_buttons_functions();
-		$('#total-questions').hide();
+		//$('#total-questions').hide();
+
+//		$('#wrong_signup').hide();		
+//		$('#div_form_questions').hide();
+//		$('#div_type_questions').hide();
+//		$('#btn_type_questions').hide();
+//		$('#div_toolbar').hide();		
+//		$('#hr-btn-functions').hide();
+		
+		$('#div_list_tests').show();
+
+  		$('.action-test').on('click',function(){
+			//alert("action-test => " + $(this).attr('id'));
+			
+			var ident = $(this).attr('id');
+			var tam = ident.length;
+			//alert(ident.substring(3,tam));
+			
+			var id = ident.substring(3,tam);
+			
+			$('#id_test').val(id);
+			
+			//var t = $('#id_test').val();
+			//alert("id => " + t);
+		});
 				
 		$('#lbl-mc').click(function(event){			
 			type_question();
@@ -184,18 +208,27 @@
 			}
 		});
 
+		var tipo = "<?=	isset($type_edit) ? $type_edit : ''; ?>";
+
 		$('#inlineRadio1').click(function(event){			
-			$('#div-part-fg2').hide();
-			$('#div-gap-fg2').hide();
-			$('#div-part-fg3').hide();
-			$('#div-gap-fg3').hide();
+			
+			if (tipo != 'fg') {
+				$('#div-part-fg2').hide();
+				$('#div-gap-fg2').hide();
+				$('#div-part-fg3').hide();
+				$('#div-gap-fg3').hide();
+			}
 		});
 	
 		$('#inlineRadio2').click(function(event){			
+
 			$('#div-part-fg2').show();
 			$('#div-gap-fg2').show();
-			$('#div-part-fg3').hide();
-			$('#div-gap-fg3').hide();
+			
+			if (tipo != 'fg') {
+				$('#div-part-fg3').hide();
+				$('#div-gap-fg3').hide();
+			}
 		});
 		
 		$('#inlineRadio3').click(function(event){
@@ -323,13 +356,26 @@
 			return ret;
 		});			
 
+		$('#btn-img-statement').change(function(e){		
+            e.preventDefault();
+            
+            $('#img-statement').toggle();
+            
+            //alert('btn-img-statement');
+		});
 
         $('#form_questions').submit(function(e) {
             e.preventDefault();
 
+			if ( $('#text-statement').val() == "  Type your Question " || $('#text-statement').val() == "") {
+				alert("Enter statement field !");
+				$('#text-statement').focus();
+				return false;
+			}
+
             var formulario = $(this); 
             var dados = formulario.serialize();								
- 			alert(dados);
+ 			//alert(dados);
  			
             $.ajax({
             	type: 'POST',
@@ -340,11 +386,15 @@
 			   	async:  true
 			
 			}).done(function(data) {
-				alert(data);
-				clear_fields();
+				//alert(data);
+				
+				var logged = "<?= $this->session->userdata('logged') ?>";
+				if (logged == 2) {
+					clear_fields();
+				}
 				
 				$('#total-questions').html(data);
-				$('#total-questions').show();
+				//$('#total-questions').show();
 				
 				$('#btn-add-question').prop('disabled', true);
 				$('#text-statement').focus();
@@ -354,10 +404,346 @@
                     
             }).always(function(data) {
                 //alert("Always !");
+            });
+		});
+
+		$('#modal_signup').on('shown.bs.modal', function(e) {	    	
+	    	e.preventDefault();
+			//alert('Carregou signup');
+			
+			$('#first_name').val('');
+			$('#last_name').val('');
+			$('#email').val('');
+			$('#password').val('');
+			$('#password_confirmation').val('');
+
+			$('#wrong_signup').html('');
+			$('#wrong_signup').hide();
+		});
+
+        $('#form_signin').submit(function(e) {
+            e.preventDefault();
+
+			var em = $('#email_login').val();
+			var email = em.replace(" ","");
+
+			var pass = $('#password_login').val();
+			var password = pass.replace(" ","");
+
+			if (email==null || email=="" || password==null || password=="") {
+				alert("Enter the Email and password fields");
+				$('#email_login').focus();
+				return false;
+			}
+			
+            var formulario = $(this); 
+            var dados = formulario.serialize();								
+ 			//alert(dados);
+ 			
+            $.ajax({
+            	type: 'POST',
+                url : base_url + 'users/login_external/',
+                data: dados,
+                dataType: 'text',
+//		       	cache: false,				       
+			   	async:  true
+			
+			}).done(function(data) {
+				//alert(data);
+				
+				$('#username').html(data);
+				var url = base_url + "home/external_questions";
+				location.href = url;
+				
+            }).fail(function(data) {
+                alert("Erro na gravação do usuário, fail !");                    
             });           
 		});
 
+        $('#form_signup').submit(function(e) {
+            e.preventDefault();
 
+			var pass = $('#password').val();
+			var pass_conf = $('#password_confirmation').val();
+			if (pass !== pass_conf) {
+				alert("Attention, different passwords, Retype !")
+				$('#password').focus();
+				return false;
+			}
+			
+			var nm = $('#first_name').val();
+			var name = nm.replace(" ","");
+			if (name==null || name=="") {
+				alert("Enter the Name fields");
+				$('#first_name').focus();
+				return false;
+			}
+			
+            var formulario = $(this); 
+            var dados = formulario.serialize();								
+ 			//alert(dados);
+ 			
+            $.ajax({
+            	type: 'POST',
+                url : base_url + 'users/save_external/',
+                data: dados,
+                dataType: 'text',
+//		       	cache: false,				       
+			   	async:  true
+			
+			}).done(function(data) {
+				//alert(data);
+				var url = base_url + "home/external_questions";
+				location.href = url;
+				
+            }).fail(function(data) {
+                alert("Erro na gravação do usuário, fail !");                    
+            });           
+		});
+
+		$('#email').change(function(e){		
+            e.preventDefault();
+            
+            //alert('focus ');
+			$('#wrong_signup').html('');
+			$('#wrong_signup').hide();
+		});
+	
+		$('#email').on("blur", function(e){		
+            e.preventDefault();
+			
+			var email = $('#email').val();
+			//alert("email => " + email);
+			if(email == 'undefined') {
+				alert('email empty !');
+				return false;
+			}
+			
+            $.ajax({
+            	type: 'GET',
+                url : base_url + 'users/search_email/',
+                data: "email=" + email,
+                dataType: 'text',				       
+			   	async:  true
+			
+			}).done(function(data) {
+				//alert('ok => ' + data);
+				
+				var str = data.replace(" ","");
+				
+				if (str.indexOf("Ok") != -1) {
+					//alert("Não existe js");
+					$('#wrong_signup').html('');
+					$('#wrong_signup').hide();
+
+				} else {
+					$('#wrong_signup').html('Attention, email is already registered !');
+					$('#wrong_signup').show();				
+					//$('#email').focus();					
+				}				
+				return true;				
+            });           						
+		});
+				
+		$('#btn-edit').click(function(e){
+			e.preventDefault();
+			
+			var el = $("input[name=radio-test]:checked").attr('id');			
+			var id = el.substr(7);
+			var type = el.substr(5, 2);			
+			var id_test = $('#id_test_question').val();
+			
+			//alert("id test => " + id_test);			
+			//alert(" id - tp => " + id + " - "+ type);
+										
+            $.ajax({
+            	type: 'GET',
+                url : base_url + 'questions/edit_questions_file/',
+                data: {id:id, type:type, id_test:id_test},
+                dataType: 'text',
+			   	async:  true
+			
+			}).done(function(data) {
+				//alert(data);							
+				$(location).attr('href', base_url + 'home/external_questions/edit_questions');				
+				 
+            }).fail(function(data) {
+                alert("Erro na gravação das questões, fail !");                    
+			});
+		});
+		
+		$('#btn-edit-test').click(function(e){
+			e.preventDefault();
+						
+			var el = $("input[name=radio-test]:checked").attr('id');			
+			var id = el.substr(5);
+										
+            $.ajax({
+            	type: 'GET',
+                url : base_url + 'questions/edit_questions_db/',
+                data: "id=" + id,
+                dataType: 'text',
+			   	async:  true
+			
+			}).done(function(data) {
+				//alert(data);							
+				$(location).attr('href', base_url + 'home/external_questions/test_questions');				
+				 
+            }).fail(function(data) {
+                alert("Erro na edição do teste-questões, fail !");                    
+			});
+		});
+		
+		$('#btn-delete').click(function(e){
+			e.preventDefault();
+			
+			var el = $("input[name=radio-test]:checked").attr('id');			
+			var elemento = '#tr' + el.substr(7);
+			
+            $.ajax({
+            	type: 'GET',
+                url : base_url + 'questions/delete_questions_file/',
+                data: "id=" + el.substr(7),
+                dataType: 'text',
+			   	async:  true
+			
+			}).done(function(data) {
+				//alert('ok => ' + data);			
+				$(elemento).fadeOut();		//$(elemento).remove(); // funciona também
+				
+            }).fail(function(data) {
+                alert("Erro na gravação do usuário, fail !");                    
+			});
+		});
+
+		$('#btn-preview-test').click(function(e){
+			e.preventDefault();
+			
+			var el = $("input[name=radio-test]:checked").attr('id');			
+			//var elemento = '#tr' + el.substr(7);			
+			//alert("ele => "+ el.substr(5));
+			
+            $.ajax({
+            	type: 'GET',
+                url : base_url + 'questionnaries/prepare_preview_test/',
+                data: "id=" + el.substr(5),
+                dataType: 'text',
+			   	async:  true
+			
+			}).done(function(data) {
+				//alert('ok => ' + data);	
+				$('#preview-question').html(data);		
+				$('#div-preview-question').modal('show');
+				
+            }).fail(function(data) {
+                alert("Err in Preview, fail !");                    
+			});
+		});
+		
+		$('#btn-preview').click(function(e){				// Questions
+			e.preventDefault();
+			
+			var el = $("input[name=radio-test]:checked").attr('id');			
+			//var elemento = '#tr' + el.substr(7);			
+			//alert("ele => "+ el.substr(7));
+			
+            $.ajax({
+            	type: 'GET',
+                url : base_url + 'questions/prepare_preview_questions/',
+                data: "id=" + el.substr(7),
+                dataType: 'text',
+			   	async:  true
+			
+			}).done(function(data) {
+				//alert('ok => ' + data);	
+				$('#preview-question').html(data);		
+				$('#div-preview-question').modal('show');
+				
+            }).fail(function(data) {
+                alert("Err in Preview, fail !");                    
+			});
+		});
+				
+		$('#btn-save-name').click(function(e){
+			//e.preventDefault();
+			
+			var el = $("input[name=radio-test]:checked").attr('id');			
+			var id = el.substr(7);
+			//var type = el.substr(5, 2);			
+
+			var name = $('#name-question-save').val();			
+			if (name == "") {
+				name = "Test " + id;
+			}			
+			$('#name-test').val(name);
+			alert("Name => " + name);
+						
+            $.ajax({
+            	type: 'GET',
+                url : base_url + 'questionnaries/save_file_db/',
+                data: "name=" + name,
+                dataType: 'text',
+			   	async:  true
+			
+			}).done(function(data) {
+				//alert('ok => ' + data);	
+				$('#preview-question').html(data);		
+				$('#div-preview-question').modal('show');
+				
+            }).fail(function(data) {
+                alert("Err in Preview, fail !");                    
+			});
+		});
+
+        $('#form_signin_save').submit(function(e) {
+            e.preventDefault();
+
+			var em = $('#email_signin_save').val();
+			var email = em.replace(" ","");
+
+			var pass = $('#password_signin_save').val();
+			var password = pass.replace(" ","");
+
+			if (email==null || email=="" || password==null || password=="") {
+				alert("Enter the Email and password fields");
+				$('#email_signin_save').focus();
+				return false;
+			}
+
+			var el = $("input[name=radio-test]:checked").attr('id');			
+			var id = el.substr(7);
+
+			var name = $('#name_signin_save').val();			
+			if (name == "") {
+				name = "Test " + id;
+				//$('#name_signin_save').val(name);
+			}			
+			$('#name-test').val(name);
+			alert("Name => " + name);
+			
+            var formulario = $(this); 
+            var dados = formulario.serialize();								
+ 			
+            $.ajax({
+            	type: 'POST',
+                url : base_url + 'questionnaries/save_file_db/',
+                data: dados,
+                dataType: 'text',
+//		       	cache: false,				       
+			   	async:  true
+			
+			}).done(function(data) {
+				//alert(data);
+				
+				$('#username').html(data);
+				//var url = base_url + "home/external_questions";
+				//location.href = url;
+				
+            }).fail(function(data) {
+                alert("Erro na gravação do usuário, fail !");                    
+            });           
+		});
+				
 		function clear_fields() {			
 			$('#text-statement').val('');
 			
@@ -381,53 +767,106 @@
 			$('#part-fg1').val('');
 			$('#gap-fg1').val('');
 			$('#part-fg2').val('');
-			$('#gap-fg12').val('');
+			$('#gap-fg2').val('');
 			$('#part-fg3').val('');
 			$('#gap-fg3').val('');
 			$('#part-fg-last').val('');
 
 			$('#text-sq').val('');
+
+			// Form SignUp			
+			$('#first_name').val('');
+			$('#last_name').val('');
+			$('#email').val('');
+			$('#password').val('');
+			$('#password_confirmation').val('');
+
+			$('#wrong_signup').html('');
+			$('#wrong_signup').hide();
 			
 			$('#text-statement').focus();
 		}
-				
-
 			
 		function type_question() {
-			$('#div-answers-mc').hide();
-			$('#div-answer1').hide();
-			$('#div-answer2').hide();
-			$('#div-answer3').hide();
-			$('#div-btn-answer3').hide();
-			$('#div-answer4').hide();
-			$('#div-btn-answer4').hide();
-			$('#div-answer5').hide();
+			var tipo = "<?=	isset($type_edit) ? $type_edit : ''; ?>";
+			var qty = "<?= $this->session->userdata("qty") ?>";
 			
-			$('#div-answers-tf').hide();
-			$('#div-tf1').hide();
-			$('#div-tf2').hide();
-			$('#div-btn-issue3').hide();
-			$('#div-tf3').hide();
-			$('#div-btn-issue4').hide();
-			$('#div-tf4').hide();
-			$('#div-btn-issue5').hide();
-			$('#div-tf5').hide();
-			
-			$('#div-answers-fg').hide();
-			$('#num_gaps').hide();
-			$('#opt_gaps').hide();
-			$('#hr-gap1').hide();
-			$('#div-part-fg1').hide();
-			$('#div-gap-fg1').hide();
-			$('#div-part-fg2').hide();
-			$('#div-gap-fg2').hide();
-			$('#div-part-fg3').hide();
-			$('#div-gap-fg3').hide();
-			$('#div-part-fg-last').hide();
+			if (tipo != "mc" && tipo != "mu" && tipo != "1" && tipo != 1 || tipo == "" || tipo == null) {
+				$('#div-answers-mc').hide();
+				$('#div-answer1').hide();
+				$('#div-answer2').hide();
+				$('#div-answer3').hide();
+				$('#div-btn-answer3').hide();
+				$('#div-answer4').hide();
+				$('#div-btn-answer4').hide();
+				$('#div-answer5').hide();			
+			}
 
-			$('#div-answers-sq').hide();
-			$('#div-text-sq').hide();
-			$('#text-sq').hide();
+			if (tipo != "tf" && tipo != "tr" && tipo != "2" && tipo != 2 || tipo == "" || tipo == null) {						
+				$('#div-answers-tf').hide();
+				$('#div-tf1').hide();
+				$('#div-tf2').hide();
+				$('#div-btn-issue3').hide();
+				$('#div-tf3').hide();
+				$('#div-btn-issue4').hide();
+				$('#div-tf4').hide();
+				$('#div-btn-issue5').hide();
+				$('#div-tf5').hide();
+			} else {
+				if (tipo == "tf" || tipo == "tr" || tipo == "2" || tipo == 2) {						
+					$('#div-answers-tf').show();
+					$('#div-tf1').show();
+					$('#div-tf2').show();
+					//$('#div-btn-issue3').show();
+					$('#div-tf3').show();
+					//$('#div-btn-issue4').show();
+					$('#div-tf4').show();
+					//$('#div-btn-issue5').show();
+					$('#div-tf5').show();
+					$('#btn-add-question').prop('disabled', false);
+				}				
+			}
+						
+			if (tipo != "fg" && tipo != "fi" && tipo != "3" && tipo != 3 || tipo == "" || tipo == null) {						
+				$('#div-answers-fg').hide();
+				$('#num_gaps').hide();
+				$('#opt_gaps').hide();
+				$('#hr-gap1').hide();
+				$('#div-part-fg1').hide();
+				$('#div-gap-fg1').hide();
+				$('#div-part-fg2').hide();
+				$('#div-gap-fg2').hide();
+				$('#div-part-fg3').hide();
+				$('#div-gap-fg3').hide();
+				$('#div-part-fg-last').hide();
+			} else {
+				if (qty == 1) {
+					$('#div-part-fg2').hide();
+					$('#div-gap-fg2').hide();
+					$('#div-part-fg3').hide();
+					$('#div-gap-fg3').hide();
+				}								
+				if (qty == 2 ) {
+					$('#div-part-fg3').hide();
+					$('#div-gap-fg3').hide();
+				}
+			}
+			
+			if (tipo != "sq" && tipo != "su" && tipo != "4" && tipo != 4 || tipo == "" || tipo == null) {									
+				$('#div-answers-sq').hide();
+				$('#div-text-sq').hide();
+				$('#text-sq').hide();
+			}
+			
+			// Form SignUp			
+			$('#first_name').val('');
+			$('#last_name').val('');
+			$('#email').val('');
+			$('#password').val('');
+			$('#password_confirmation').val('');
+
+			$('#wrong_signup').html('');
+			$('#wrong_signup').hide();
 		}
 		
 		function right_wrong() {						
@@ -457,7 +896,7 @@
 			$('#btn-save').attr('disabled', 'disabled');
 			$('#btn-save-new').attr('disabled', 'disabled');
 			$('#btn-send').attr('disabled', 'disabled');
-			$('#btn-add-question').prop('disabled', true);
+			$('#btn-add-question').prop('disabled', false);
 		}
 	});
 		

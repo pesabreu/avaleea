@@ -10,10 +10,11 @@ class M_users extends CI_Model {
     
     function return_users($id_users = 0, $reg_initial = 0, $per_page = 0) {
 
-        $this->db->select("tbusers.*, tbpeople.*, tbuser_level.*, tbusers.id_people as idpeople,  
+        $this->db->select("tbusers.*, tbuser_level.*, tbpeople.*, tbweb_contact.*, tbusers.id_people as idpeople,  
 			tbpeople.name as name_people, tbusers.login as login, tbuser_level.code as code_level");
         $this->db->join("tbuser_level", "tbuser_level.id_user_level = tbusers.id_user_level", 'LEFT');
 		$this->db->join("tbpeople", "tbpeople.id_people = tbusers.id_people", 'LEFT');
+		$this->db->join("tbweb_contact", "tbweb_contact.id_people = tbpeople.id_people", 'LEFT');
 	               
         if ($id_users != 0) {
             $this->db->where("tbusers.id_users", $id_users);
@@ -23,8 +24,8 @@ class M_users extends CI_Model {
             $this->db->limit($per_page, $reg_initial);            
         }
         
-		$query = $this->db->get("tbusers");
-		echo $this->db->last_query() ."<br /><br />";
+		//$query = $this->db->get("tbusers");
+		//echo $this->db->last_query() ."<br /><br />";
 		
 		return $this->db->get("tbusers");	
 	}
@@ -230,5 +231,116 @@ class M_users extends CI_Model {
 		
 		return $ret;			
 	}
+
+/**************************************************************************************************
+*
+*		Method of users external
+*  
+* **************************************************************************************************/
+
+	public function save_external() {
+		
+		//print_r($_POST);
+		//exit;
+		
+		$id_people = $this->m_setup->return_next_id('tbpeople', 'id_people');				  
+		                
+        $first_name = $this->input->post("first_name");
+		$last_name = $this->input->post("last_name");
+		$name = $first_name ." ". $last_name;
+
+        $data = array ( 
+        	'id_people' => $id_people,         
+            'type_people' => 'F',
+            'id_categories' => 5,
+            'id_occupation_area' => 1,
+            'name' => $name
+		);
+						
+        if ($this->db->insert("tbpeople", $data)) {
+				 
+			$email = $this->input->post("email");
+			$id_web_contact = $this->m_setup->return_next_id('tbweb_contact', 'id_web_contact');
+			
+	        $data = array ( 
+	        	'id_web_contact' => $id_web_contact,         	        	        
+	        	'id_people' => $id_people,         
+	            'email_1' => $email
+			);
+	
+	        if ($this->db->insert("tbweb_contact", $data)) {
+
+				$password = $this->input->post("password");
+				$id_users = $this->m_setup->return_next_id('tbusers', 'id_users');
+
+		        $data = array ( 
+		        	'id_users' => $id_users,         	        	        
+		        	'id_people' => $id_people,   
+		        	'id_user_level' => 4,      
+		            'login' => $email,
+		            'password' => md5($password),
+		            'logged' => '0'
+				);
+		        
+		        if ($this->db->insert("tbusers", $data)) {
+					
+					$ret = array(
+						"id_people" => $id_people,
+						"id_users" => $id_users
+					);
+					
+					return $ret;
+				}
+        	}					// end Insert tbweb_contact
+        }						// end Insert tbpeople
+         
+        return array();
+	}
+	
+	public function search_email($email) {
+
+        $this->db->select("tbweb_contact.id_people");
+		$this->db->like("tbweb_contact.email_1", $email);
+		$this->db->where("tbweb_contact.status", '1');
+		$people = $this->db->get('tbweb_contact')->row();
+		
+		$id_people = $people->id_people;
+
+		$this->db->select("tbusers.*");
+		$this->db->where("tbusers.id_people", $id_people);
+		$this->db->where("tbusers.status", '1');
+	
+		$existe_email = $this->db->get('tbusers')->row();
+		
+		$ret = '';
+		
+		if ($existe_email) {
+			$ret = $existe_email;
+		}
+		
+		return $ret;
+	}
+    
+    function recovery_user_password($user, $password) {
+        
+        if (trim($user) == "" || trim($password) == "") {
+        	return FALSE;
+		}
+		
+    	$this->db->select("tbusers.*, tbpeople.*, tbweb_contact.*, tbusers.id_users as id, 
+    		tbpeople.id_people as id_people_admin, tbpeople.name as name_admin, tbpeople.dt_update as dt");
+						 
+		$this->db->join("tbpeople", "tbpeople.id_people = tbusers.id_people", 'LEFT');								
+		$this->db->join("tbweb_contact", "tbweb_contact.id_people = tbusers.id_people", 'LEFT');
+			
+		$this->db->like("login", trim($user));
+		$this->db->like("password", md5(trim($password)));
+			
+		$consult = $this->db->get("tbusers")->result_array();		      
+					        
+        //$consult = $this->db->get_where("tbusers", array("login" => $user))->row();
+        return $consult;        
+	} 
+
 
 }

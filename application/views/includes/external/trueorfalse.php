@@ -8,12 +8,13 @@
 						<div class="col-2">
 							<div class="form-check">
 								<input class="form-text-input mr-1 text-center" type="text" name="issue1" id="issue1" maxlength="1" 
-										style="width: 30px; margin-left: -20px;" title="Type (T)rue or (F)alse" pattern="[TtFf]{1}">
+										style="width: 30px; margin-left: -20px;" title="Type (T)rue or (F)alse" pattern="[TtFf]{1}"
+										value="<?= isset($tests[1]['truefalse']) ? $tests[1]['truefalse'] : ""; ?>">
 							</div>
 						</div>
 						<div class="col-10" style="margin-left: -80px;">	
 							<textarea style="width:888px;" id="issue-tf1" name="issue-tf1" rows="1" onfocus="if (this.value=='  Issue 1 ')this.value=''" 
-									onblur="if(this.value=='') this.value='  Issue 1 '">  Issue 1 </textarea>	
+									onblur="if(this.value=='') this.value='  Issue 1 '"><?= isset($tests[1]['iss1']) ? $tests[1]['iss1'] : "  Issue 1 "; ?></textarea>	
 						</div>
 					</div>
 				</div>
@@ -23,12 +24,13 @@
 						<div class="col-2">
 							<div class="form-check">								
 								<input class="form-text-input mr-1 text-center" type="text" name="issue2" id="issue2" maxlength="1" 
-										style="width: 30px; margin-left: -20px;" title="Type (T)rue or (F)alse" pattern="[TtFf]{1}">								
+										style="width: 30px; margin-left: -20px;" title="Type (T)rue or (F)alse" pattern="[TtFf]{1}"
+										value="<?= isset($tests[2]['truefalse']) ? $tests[2]['truefalse'] : ""; ?>">								
 							</div>
 						</div>
 						<div class="col-10" style="margin-left: -80px;">	
 							<textarea style="width:888px;" id="issue-tf2" name="issue-tf2" rows="1" onfocus="if (this.value=='  Issue 2 ')this.value=''" 
-									onblur="if(this.value=='') this.value='  Issue 2 '">  Issue 2 </textarea>	
+									onblur="if(this.value=='') this.value='  Issue 2 '"><?= isset($tests[2]['iss2']) ? $tests[2]['iss2'] : "  Issue 2 "; ?></textarea>	
 						</div>
 					</div>
 				</div>
@@ -50,12 +52,13 @@
 						<div class="col-2">
 							<div class="form-check">
 								<input class="form-text-input mr-1 text-center" type="text" name="issue3" id="issue3" maxlength="1" 
-										style="width: 30px; margin-left: -20px;" title="Type (T)rue or (F)alse" pattern="[TtFf]{1}">
+										style="width: 30px; margin-left: -20px;" title="Type (T)rue or (F)alse" pattern="[TtFf]{1}"
+										value="<?= isset($tests[3]['truefalse']) ? $tests[3]['truefalse'] : ""; ?>">
 							</div>
 						</div>
 						<div class="col-10" style="margin-left: -80px;">	
 							<textarea style="width:888px;" id="issue-tf3" name="issue-tf3" rows="1" onfocus="if (this.value=='  Issue 3 ')this.value=''" 
-									onblur="if(this.value=='') this.value='  Issue 3 '">  Issue 3 </textarea>	
+									onblur="if(this.value=='') this.value='  Issue 3 '"><?= isset($tests[3]['iss3']) ? $tests[3]['iss3'] : "  Issue 3 "; ?></textarea>	
 						</div>
 					</div>
 				</div>
@@ -78,12 +81,13 @@
 						<div class="col-2">
 							<div class="form-check">
 								<input class="form-text-input mr-1 text-center" type="text" name="issue4" id="issue4" maxlength="1" 
-										style="width: 30px; margin-left: -20px;" title="Type (T)rue or (F)alse" pattern="[TtFf]{1}">
+										style="width: 30px; margin-left: -20px;" title="Type (T)rue or (F)alse" pattern="[TtFf]{1}"
+										value="<?= isset($tests[4]['truefalse']) ? $tests[4]['truefalse'] : ""; ?>">
 							</div>
 						</div>
 						<div class="col-10" style="margin-left: -80px;">	
 							<textarea style="width:888px;" id="issue-tf4" name="issue-tf4" rows="1" onfocus="if (this.value=='  Issue 4 ')this.value=''" 
-									onblur="if(this.value=='') this.value='  Issue 4 '">  Issue 4 </textarea>	
+									onblur="if(this.value=='') this.value='  Issue 4 '"><?= isset($tests[4]['iss4']) ? $tests[4]['iss4'] : "  Issue 4 "; ?></textarea>	
 						</div>
 					</div>
 				</div>
@@ -106,12 +110,13 @@
 						<div class="col-2">
 							<div class="form-check">
 								<input class="form-text-input mr-1 text-center" type="text" name="issue5" id="issue5"	 maxlength="1" 
-										style="width: 30px; margin-left: -20px;" title="Type (T)rue or (F)alse" pattern="[TtFf]{1}">
+										style="width: 30px; margin-left: -20px;" title="Type (T)rue or (F)alse" pattern="[TtFf]{1}"
+										value="<?= isset($tests[5]['truefalse']) ? $tests[5]['truefalse'] : ""; ?>">
 							</div>
 						</div>
 						<div class="col-10" style="margin-left: -80px;">	
 							<textarea style="width:888px;" id="issue-tf5" name="issue-tf5" rows="1" onfocus="if (this.value=='  Issue 5 ')this.value=''" 
-									onblur="if(this.value=='') this.value='  Issue 5 '">  Issue 5 </textarea>	
+									onblur="if(this.value=='') this.value='  Issue 5 '"><?= isset($tests[5]['iss5']) ? $tests[5]['iss5'] : "  Issue 5 "; ?></textarea>	
 						</div>
 					</div>
 				</div>

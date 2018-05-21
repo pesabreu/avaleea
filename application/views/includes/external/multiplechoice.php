@@ -1,4 +1,11 @@
 
+<?php	
+/*
+	print_r($tests);
+	exit;
+*/
+?>
+
             <!-- input answers Multiple Choice - mc -->
             <div class="row text-center d-flex justify-content-center align-items-center my-1 mx-5" name="div-answers-mc" id="div-answers-mc">
 
@@ -9,11 +16,13 @@
 						</div>
 						<div class="col-8" style="margin-left: -80px;">	
 							<textarea style="width:788px;" id="answer1" name="answer1" rows="1" onfocus="if (this.value=='  Option 1 ')this.value='  '" 
-									onblur="if(this.value=='  ') this.value='  Option 1 '">  Option 1 </textarea>	
+									onblur="if(this.value=='  ') this.value='  Option 1 '"><?= isset($tests[1]['asw1']) ? $tests[1]['asw1'] : "  Option 1 "; ?></textarea>	
 						</div>
 						<div class="col-1 bg-info" style="margin-left: 130px; height: 30px; padding-top: 2px;">
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong1" value="right-wrong1" checked>
+								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong1" value="right-wrong1" 						
+								<?= isset($tests[1]['rw']) ? ($tests[1]['rw'] == 'r' ? 'checked' : '') : ''; ?>>
+								
 								<span id="span-rw1"> <img class="img-fluid" src="../includes/img/right.png" height="10px" style="margin-top: -4px;"> </span>
 							</div>
 						</div>
@@ -26,11 +35,12 @@
 						</div>
 						<div class="col-8" style="margin-left: -80px;">	
 							<textarea style="width:788px;" id="answer2" name="answer2" rows="1" onfocus="if (this.value=='  Option 2 ')this.value='  '" 
-									onblur="if(this.value=='  ') this.value='  Option 2 '">  Option 2 </textarea>	
+									onblur="if(this.value=='  ') this.value='  Option 2 '"><?= isset($tests[2]['asw2']) ? $tests[2]['asw2'] : "  Option 2 "; ?></textarea>	
 						</div>
 						<div class="col-1 bg-info" style="margin-left: 130px; height: 30px; padding-top: 2px;">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong2" value="right-wrong2">
+								<?= isset($tests[2]['rw']) ? ($tests[2]['rw'] == 'r' ? 'checked' : '') : ""; ?>
 								<span id="span-rw2"> <img class="img-fluid" src="../includes/img/wrong.png" height="30px" style="margin-top: -4px;"> </span>
 							</div>
 						</div>						
@@ -56,11 +66,12 @@
 						</div>
 						<div class="col-8" style="margin-left: -80px;">	
 							<textarea style="width:788px;" id="answer3" name="answer3" rows="1" onfocus="if (this.value=='  Option 3 ')this.value='  '" 
-									onblur="if(this.value=='  ') this.value='  Option 3 '">  Option 3 </textarea>	
+									onblur="if(this.value=='  ') this.value='  Option 3 '"><?= isset($tests[3]['asw3']) ? $tests[3]['asw3'] : "  Option 3 "; ?></textarea>	
 						</div>
 						<div class="col-1 bg-info" style="margin-left: 130px; height: 30px; padding-top: 2px;">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong3" value="right-wrong3">
+								<?= isset($tests[3]['rw']) ? ($tests[3]['rw'] == 'r' ? 'checked' : '') : ""; ?>
 								<span id="span-rw3"> <img class="img-fluid" src="../includes/img/wrong.png" height="20px" style="margin-top: -4px;"> </span>
 							</div>
 						</div>												
@@ -86,11 +97,12 @@
 						</div>
 						<div class="col-8" style="margin-left: -80px;">	
 							<textarea style="width:788px;" id="answer4" name="answer4" rows="1" onfocus="if (this.value=='  Option 4 ')this.value='  '" 
-									onblur="if(this.value=='  ') this.value='  Option 4 '">  Option 4 </textarea>	
+									onblur="if(this.value=='  ') this.value='  Option 4 '"><?= isset($tests[4]['asw4']) ? $tests[4]['asw4'] : "  Option 4 "; ?></textarea>	
 						</div>
 						<div class="col-1 bg-info" style="margin-left: 130px; height: 30px; padding-top: 2px;">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong4" value="right-wrong4">
+								<?= isset($tests[4]['rw']) ? ($tests[4]['rw'] == 'r' ? 'checked' : '') : ""; ?>
 								<span id="span-rw4"> <img class="img-fluid" src="../includes/img/wrong.png" height="20px" style="margin-top: -4px;"> </span>
 							</div>
 						</div>												
@@ -116,11 +128,12 @@
 						</div>
 						<div class="col-8" style="margin-left: -80px;">	
 							<textarea style="width:788px;" id="answer5" name="answer5" rows="1" onfocus="if (this.value=='  Option 5 ')this.value='  '" 
-									onblur="if(this.value=='  ') this.value='  Option 5 '">  Option 5 </textarea>	
+									onblur="if(this.value=='  ') this.value='  Option 5 '"><?= isset($tests[5]['asw5']) ? $tests[5]['asw5'] : "  Option 5 "; ?></textarea>	
 						</div>
 						<div class="col-1 bg-info" style="margin-left: 130px; height: 30px; padding-top: 2px;">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong5" value="right-wrong5">
+								<?= isset($tests[5]['rw']) ? ($tests[5]['rw'] == 'r' ? 'checked' : '') : ""; ?>
 								<span id="span-rw5"> <img class="img-fluid" src="../includes/img/wrong.png" height="20px" style="margin-top: -4px;"> </span>
 							</div>
 						</div>

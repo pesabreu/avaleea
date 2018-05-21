@@ -348,41 +348,63 @@ class questions extends MY_controller {
 *  
 * **************************************************************************************************/
 
-
 	public function save_external() {
+
 		ini_set('display_errors', 1);
 		error_reporting(E_ALL);
+	
+		$total_questions = $this->session->userdata("save_questions_external");
 
-		$tot_bytes = 0;
-		$dir = "c:/wamp64/www/avaleea/uploads/temp_questions/";
-		//$dir = "../uploads/temp_questions/";
+    	$logged = $this->session->userdata("logged");
+
+    	if ($logged == "2") {    	
+			$total_questions = $this->save_external_file();
+
+		} else {
+	    	if ($logged == "3") {    	
+				$total_questions = $this->save_external_db();
 				
+			} else {
+				$total_questions = "Error, contact Support !";
+			}
+		}
+        echo "Total saved questions: " .$total_questions;		
+		//return TRUE;		
+	}
+
+	public function save_external_file() {
+
 		$qty_question =	$this->session->userdata("save_questions_external");
 		$nro_question = $qty_question + 1;
+
+		$arquivo = $this->session->userdata("name_file");	
 		
-		if ($qty_question == 0) {
-			$name_file = randString(12) ."_". date("y-m-d") .".avl";
-			$this->session->set_userdata("name_file", $name_file);
-			
-			$fp = fopen(URL_UPL_QUESTIONS.$name_file, "w");
-			if (!$fp) {
-				 return FALSE; 
-			}
+		$var = $this->session->userdata("file_pointer");
+		$fp = isset($var) ? $var : 0;
 		
-		} else {
-			$arquivo = $this->session->userdata("name_file");	
-			$fp = fopen($dir.$arquivo, "a");
+		if ($fp == 0) {
+			$fp = fopen(URL_UPL_QUESTIONS.$arquivo, "a+");						
+			if ( ! $fp ) {
+				return FALSE;
+			}			
 		}
+		
+		$tot_bytes = filesize(URL_UPL_QUESTIONS.$arquivo);		
 		
 	    $type_question = $this->input->post("chosen_option");
 		$linha = "[ start - ". $type_question ." - ". str_pad($nro_question, 3, "0", STR_PAD_LEFT) ." ]";
 		$tot_bytes += fwrite($fp, $linha ."\r\n");
+	    $type_question = $this->input->post("chosen_option");
 		
 		$text_statement = $this->input->post("text-statement");
 		$tot_bytes += fwrite($fp, "stt - ". $text_statement ."\r\n\r\n");		
 		
 		switch ($type_question) {
+			
 			case 'mc':
+				$right_wrong = $this->input->post("right-wrong");
+				$tot_bytes += fwrite($fp, $right_wrong ."\r\n");
+				
 				$answer1 = trim($this->input->post("answer1"));
 				$tot_bytes += fwrite($fp, "asw1 - ". $answer1 ."\r\n");
 				
@@ -405,11 +427,7 @@ class questions extends MY_controller {
 				$answer5 = isset($var) ? trim($var) : '';
 				if ($answer5 != '' && substr(trim($answer5), 0, 6) != "Option") {
 					$tot_bytes += fwrite($fp, "asw5 - ". $answer5 ."\r\n"); 
-				}
-				
-				$right_wrong = $this->input->post("right-wrong");
-				$tot_bytes += fwrite($fp, $right_wrong ."\r\n");
-				
+				}				
 				break;
 
 			case 'tf':
@@ -427,8 +445,8 @@ class questions extends MY_controller {
 				$issue3 = isset($var) ? trim($var) : '';
 				$var = $this->input->post("issue-tf3");
 				$issue_tf3 = isset($var) ? trim($var)  : '';
-				if (($issue3 != '') && ($issue_tf3 != '') && (substr(trim($issue_tf3), 0, 5) != "Issue") )
-					$linha = $issue3 ." - ". $issue_tf3; {
+				if (($issue3 != '') && ($issue_tf3 != '') && (substr(trim($issue_tf3), 0, 5) != "Issue") ) {
+					$linha = $issue3 ." - ". $issue_tf3; 
 					$tot_bytes += fwrite($fp, "iss3 - ". $linha ."\r\n"); 
 				}
 								
@@ -436,8 +454,8 @@ class questions extends MY_controller {
 				$issue4 = isset($var) ? trim($var) : '';
 				$var = $this->input->post("issue-tf4");
 				$issue_tf4 = isset($var) ? trim($var) : '';
-				if (($issue4 != '') && ($issue_tf4 != '') && (substr(trim($issue_tf4), 0, 5) != "Issue") )
-					$linha = $issue4 ." - ". $issue_tf4; {
+				if (($issue4 != '') && ($issue_tf4 != '') && (substr(trim($issue_tf4), 0, 5) != "Issue") ) {
+					$linha = $issue4 ." - ". $issue_tf4;
 					$tot_bytes += fwrite($fp, "iss4 - ". $linha ."\r\n"); 
 				}
 
@@ -445,11 +463,10 @@ class questions extends MY_controller {
 				$issue5 = isset($var) ? trim($var) : '';
 				$var = $this->input->post("issue-tf5");
 				$issue_tf5 = isset($var) ? trim($var) : '';
-				if (($issue5 != '') && ($issue_tf5 != '') && (substr(trim($issue_tf5), 0, 5) != "Issue") )
-					$linha = $issue5 ." - ". $issue_tf5; {
+				if (($issue5 != '') && ($issue_tf5 != '') && (substr(trim($issue_tf5), 0, 5) != "Issue") ) {
+					$linha = $issue5 ." - ". $issue_tf5;
 					$tot_bytes += fwrite($fp, "iss5 - ". $linha ."\r\n"); 
-				}
-			
+				}			
 				break;
 
 			case 'fg':
@@ -462,9 +479,6 @@ class questions extends MY_controller {
 				$gap_fg1 = trim($this->input->post("gap-fg1"));
 				$tot_bytes += fwrite($fp, "gp1 - ". $gap_fg1 ."\r\n");
 				
-				$part_fg_last = trim($this->input->post("part-fg-last"));
-				$tot_bytes += fwrite($fp, "lst - ". $part_fg_last ."\r\n");
-
 				$var = $this->input->post("part-fg2");
 				$part_fg2 = isset($var) ? trim($var) : '';
 				if ($part_fg2 != '' && substr(trim($part_fg2), 0, 6) != "Second") {
@@ -487,16 +501,19 @@ class questions extends MY_controller {
 				$gap_fg3 = isset($var) ? trim($var)  : '';
 				if ($gap_fg3 != '' && substr(trim($gap_fg3), 0, 5) != "Third") {
 					$tot_bytes += fwrite($fp, "gp3 - ". $gap_fg3 ."\r\n"); 
-				}				
-			
+				}							
+
+				$part_fg_last = trim($this->input->post("part-fg-last"));
+				$tot_bytes += fwrite($fp, "lst - ". $part_fg_last ."\r\n");
 				break;
 
 			case 'sq':
 				$text_sq = trim($this->input->post("text-sq"));
 				$tot_bytes += fwrite($fp, "sbq - ". $text_sq ."\r\n");
-
-			default:
+				break;
 				
+			default:
+				return FALSE;				
 				break;
 		}
 		
@@ -507,10 +524,627 @@ class questions extends MY_controller {
 		fclose($fp);
 		
 		$this->session->set_userdata("save_questions_external", $nro_question);
-		$total_questions = str_pad($nro_question, 3, "0", STR_PAD_LEFT); 
+		$total_questions = str_pad($nro_question, 3, "0", STR_PAD_LEFT);
 		
-		//echo "Fim =>";
-		echo "Total saved questions: " .$total_questions;		
+		$id_edit = $this->input->post("id_edit");		
+				
+		echo "<br /><br />";
+		echo "<br /> id - type => ". $id_edit ." - ". $type_question ."<br />";
+				
+		if ($id_edit != "0" && trim($type_question) != "" && $type_question != '') {								
+			$this->delete_questions_file(1, $id_edit);			
+			renumber_questions_file();		
+		}
+		//$ret = $this->update_cookie();	 
+		return $total_questions;		
 	}
 
-}
+	public function save_external_db() {
+				
+		print_r($_POST);
+		exit;
+		
+		$tot_questions = 0;
+
+	   	$type_question = $this->input->post("chosen_option");		
+		$text_statement = $this->input->post("text-statement");
+		
+		switch ($type_question) {
+			
+			case 'mc':
+				$right_wrong = $this->input->post("right-wrong");				
+				$answer1 = trim($this->input->post("answer1"));				
+				$answer2 = trim($this->input->post("answer2"));
+
+				$var = $this->input->post("answer3");
+				$answer3 = isset($var) ? trim($var) : '';
+								
+				$var = $this->input->post("answer4");
+				$answer4 = isset($var) ? trim($var) : '';
+				
+				$var = $this->input->post("answer5");
+				$answer5 = isset($var) ? trim($var) : '';
+				$data = array(
+					"type" => 'mc',
+					"statement" => $text_statement,
+					"right_wrong" => $right_wrong,
+					"answer1" => $answer1,
+					"answer2" => $answer2,
+					"answer3" => $answer3,
+					"answer4" => $answer4,
+					"answer5" => $answer5
+				);								
+				break;
+
+			case 'tf':
+				$issue1 = trim($this->input->post("issue1"));				
+				$issue_tf1 = trim($this->input->post("issue-tf1"));
+
+				$issue2 = trim($this->input->post("issue2"));
+				$issue_tf2 = trim($this->input->post("issue-tf2"));
+
+				$var = $this->input->post("issue3");
+				$issue3 = isset($var) ? trim($var) : '';
+				$var = $this->input->post("issue-tf3");
+				$issue_tf3 = isset($var) ? trim($var)  : '';
+
+				$var = $this->input->post("issue4");
+				$issue4 = isset($var) ? trim($var) : '';
+				$var = $this->input->post("issue-tf4");
+				$issue_tf4 = isset($var) ? trim($var) : '';
+
+				$var = $this->input->post("issue5");
+				$issue5 = isset($var) ? trim($var) : '';
+				$var = $this->input->post("issue-tf5");
+				$issue_tf5 = isset($var) ? trim($var) : '';
+				$data = array(
+					"type" => 'tf',
+					"statement" => $text_statement,
+					"issue1" => $issue1,
+					"issue-tf1" => $issue_tf1,
+					"issue2" => $issue2,
+					"issue-tf2" => $issue_tf2,
+					"issue3" => $issue3,
+					"issue-tf3" => $issue_tf3,
+					"issue4" => $issue4,
+					"issue-tf4" => $issue_tf4,
+					"issue5" => $issue5,
+					"issue-tf5" => $issue_tf5
+				);				
+				break;
+
+			case 'fg':
+				
+				$qty_gap = trim($this->input->post("inlineRadioOptions"));				
+				$part_fg1 = trim($this->input->post("part-fg1"));
+				$gap_fg1 = trim($this->input->post("gap-fg1"));
+				$part_fg_last = trim($this->input->post("part-fg-last"));
+
+				$var = $this->input->post("part-fg2");
+				$part_fg2 = isset($var) ? trim($var) : '';				
+				$var = $this->input->post("gap-fg2");
+				$gap_fg2 = isset($var) ? trim($var)  : '';
+				
+				$var = $this->input->post("part-fg3");
+				$part_fg3 = isset($var) ? trim($var) : '';
+				$var = $this->input->post("gap-fg3");
+				$gap_fg3 = isset($var) ? trim($var)  : '';
+				$data = array(
+					"type" => 'fg',
+					"statement" => $text_statement,
+					"qty_gap" => $qty_gap,
+					"part_fg1" => $part_fg1,
+					"gap_fg1" => $gap_fg1,
+					"part_fg2" => $part_fg2,
+					"gap_fg2" => $gap_fg2,
+					"part_fg3" => $part_fg3,
+					"gap_fg3" => $gap_fg3,
+				);				
+				break;
+
+			case 'sq':
+				$text_sq = trim($this->input->post("text-sq"));
+				$data = array(
+					"type" => 'fg',
+					"statement" => $text_statement,
+					"text_sq" => $text_sq,
+				);	
+				break;
+				
+			default:
+				return FALSE;			
+				break;
+		}
+
+		$ret = $this->m_questions->save_external($data);
+
+	}
+		
+	public function update_cookie() {
+		//$cookie = $_COOKIE['avaleea'];
+		//$ret = unserialize($cookie);	
+
+		$time = time() + (3600*24*1*1*1);	// 1 day expiry date
+		
+		$value_cookie = array(
+			"identify" => $this->session->userdata("prefix"),
+			"name_file" => $this->session->userdata("name_file"),
+			"quantity" => $this->session->userdata("save_questions_external")
+		);
+
+		$cookie = setcookie('avaleea', serialize($value_cookie), $time); //, '', "http://localhost/avaleea/");
+		
+		$ret = FALSE;
+		if ($cookie) { $ret = TRUE; }
+		
+		return $ret;		
+	}
+
+	public function edit_questions_file() {
+
+		$id = $this->input->get("id");
+		$id_test = $this->input->get("id_test");
+		$type = strtolower($this->input->get("type"));
+
+		$this->session->set_userdata("id_edit", $id);		
+		$this->session->set_userdata("id_test", $id_test);		
+		$this->session->set_userdata("type_edit", $type);
+
+		return TRUE;
+	}
+
+	public function edit_questions_db() {
+
+		$id = $this->input->get("id");
+
+		$this->session->set_userdata("id_test", $id);
+		return TRUE;
+	}
+
+	public function delete_questions_file($edit=0, $id_edit=0) {
+			
+		if ($edit == 0) {	
+			$id = $this->input->get("id");
+		} else {
+			
+			if ($edit == 1) {
+				$id = $id_edit;
+			
+			} else {
+				return FALSE;
+			}
+		}
+
+		$logged = $this->session->userdata("logged");
+		
+		if ($logged != "3") {
+			$find = FALSE;
+						
+			$arquivo = $this->session->userdata("name_file");			
+			$file = file(URL_UPL_QUESTIONS.$arquivo); 			// Lê todo o arquivo para um vetor
+			 			
+		    foreach($file as $k => $linha) {		// passa linha a linha do arquivo  
+				if ( (substr($linha, 2, 5) == "start") && (substr($linha, 15, 3) == $id) ) {
+	        		$find = TRUE;
+					if ($k > 0) {
+						unset($file[$k-1]); // Eliminando a linha
+					}
+					unset($file[$k]); // Eliminando a linha
+				}	        	
+	        	if ( $find && (substr($linha, 2, 3) == "end") ) {
+	        		$find = FALSE;
+	        		unset($file[$k]); // Eliminando a linha		
+	        	}	            
+	            if ($find) {
+	            	unset($file[$k]); // Eliminando a linha
+				}
+			} 	     	 
+	    	file_put_contents(URL_UPL_QUESTIONS.$arquivo, $file);		// Reescrevendo o arquivo	
+			$delete = TRUE;
+		
+		} else {			
+			$delete = $this->m_questions->delete($id);			
+		}
+		
+		$ret = FALSE;
+		
+		if ($delete) {
+			$quantity = ($this->session->userdata("save_questions_external") - 1);
+			$this->session->set_userdata("save_questions_external", $quantity);
+			$ret = TRUE;
+		}		
+		return $ret;
+	}
+
+	public function prepare_preview_questions() {
+			
+		$id = $this->input->get("id");
+		$logged = $this->session->userdata("logged");			
+		
+		if ($logged == "3") {		// Search in DB
+			
+			$data = $this->m_questions->return_questions_completed(0, $id)->result_array();
+			$tp = $data[0]['id_alternatives_type'];
+
+			switch ($tp) {
+				case 1:
+					$type = "mc";				
+					break;
+				case 2:
+					$type = "tf";				
+					break;
+				case 3:
+					$type = "fg";				
+					break;
+				case 4:
+					$type = "sq";				
+					break;
+			}
+			
+			$question = $this->format_preview_db($data);
+			
+			$html = $this->format_preview($question, $type);
+			
+		} else {					// Search in file
+
+			$arquivo = $this->session->userdata("name_file");			
+			$file = file(URL_UPL_QUESTIONS.$arquivo); // Lê todo o arquivo para um vetor 
+	
+			$qty_fg = 0;
+			$find = FALSE;
+			$data = array();
+			
+		    foreach($file as $k => $linha) {		// passa linha a linha do arquivo 
+		    		    
+		    	if (trim(substr($linha, 0, 3)) == "" || substr($linha, 0, 3) == "   ") {
+		    		continue;
+		    	}
+		    	
+				if ( (substr($linha, 2, 5) == "start") && (intval(substr($linha, 15, 3)) == intval($id)) ) {					
+	        		$find = TRUE;
+					$type = substr($linha, 10, 2);
+					continue;
+				} else {
+
+		        	if ( $find && (substr($linha, 0, 3) == "stt") ) {					
+						$array = array(
+							"type" => $type,	
+							"id" => $id,
+							"statement" => substr($linha, 6)
+						);	        		
+		        		array_push($data, $array);
+						continue;		
+		        	} else {
+			        		
+						if ( $find ) {
+						
+							switch ($type) {
+								case 'mc':
+									if ( (substr($linha, 0, 2) == "  ") || (substr(trim($linha), 0, 2) == "") ) {
+										continue;
+									}
+									if ( $find && (substr($linha, 0, 5) == "right") ) {
+										
+										$array = array(
+											"correct_alternative" => substr($linha, 11)
+										);
+						        		array_push($data, $array);	
+										continue;															
+									}						
+									if ( $find && (substr($linha, 0, 3) == "asw") ) {							
+										$array = array(
+											"id_alternative" => substr($linha, 3, 1),
+											"alternative" => substr($linha, 7)		
+										);
+						        		array_push($data, $array);
+										continue;																
+									}																	
+									break;
+								
+								case 'tf':						
+									if ( $find && (substr($linha, 0, 3) == "iss") ) {							
+										$array = array(
+											"id_alternative" => substr($linha, 3, 1),
+											"true_false" => substr($linha, 7, 1),
+											"alternative" => substr($linha, 11)		
+										);
+						        		array_push($data, $array);
+										continue;																
+									}
+									if ( $find && (substr($linha, 0, 5) == "right") ) {
+										
+										$array = array(
+											"correct_alternative" => substr($linha, 11)
+										);
+						        		array_push($data, $array);
+										continue;																
+									}						
+									break;
+								
+								case 'fg':						
+									if ( $find && (substr($linha, 0, 3) == "qty") ) {							
+										$array = array(
+											"quantity" => substr($linha, 12, 1)		
+										);										
+										$qty_fg = substr($linha, 12, 1);
+						        		
+						        		array_push($data, $array);																
+										continue;
+										
+									} else {								
+										if ( $find && (substr($linha, 0, 3) == "lst") ) {
+												
+											if ($qty_fg > 1) {	
+												$arr = array(
+													"type" => substr($linha, 0, 3),									
+													"alternative" => substr($linha, 6) 		
+												);	
+
+											} else {
+												$array = array(
+													"type" => substr($linha, 0, 3),									
+													"alternative" => substr($linha, 6) 		
+												);
+								        		array_push($data, $array);																																									
+											}
+											continue;
+												
+										} else {										
+											if ( $find && (substr($linha, 0, 2) == "pt" || substr($linha, 0, 2) == "gp") ) {							
+												$array = array(
+													"type" => substr($linha, 0, 3),									
+													"alternative" => substr($linha, 6) 		
+												);
+							        			array_push($data, $array);
+							        			continue;																
+											}
+										}
+									}
+									break;
+								
+								case 'sq':						
+									if ( $find && (substr($linha, 0, 3) == "sbq") ) {							
+										$array = array(
+											"alternative" => substr($linha, 6)		
+										);
+						        		array_push($data, $array);
+										continue;																
+									}
+									
+									if ( (substr($linha, 2, 3) != "end") && (substr($linha, 0, 3) != "sbq")) {							
+									
+										if ( $find && (substr($linha, 0, 1) != " ") && 
+												(trim(substr($linha, 0, 1)) != "") && (trim(substr($linha, 0, 1)) != "[") ) {
+											
+											$array = array(
+												"alternative" => substr($linha, 6)
+											);
+							        		array_push($data, $array);
+							        		continue;																
+										}						
+									}
+									break;
+							}
+						}
+					}
+		        	if ( $find && (substr($linha, 2, 3) == "end") ) {
+		        		if ($type == "fg" && $qty_fg > 1) {
+							array_push($data, $arr);
+						}	
+		        		$find = FALSE;
+						break;
+					}					
+				}
+			}							// End Foreach
+		
+			$html = $this->format_preview($data, $type);
+		}								// End If($logged)
+			
+//		print_r($data);
+//		exit;
+			
+		echo $html;				
+	}									// End Function
+
+	public function format_preview($data, $type) {		
+		$html = "";
+		$i = 0;		
+/*				
+		echo "<br /><br /><br /> tipo => ". $type ."<br />";	
+		print_r($data);
+		exit;	
+*/				
+		foreach ($data as $linha) {
+			$i++;
+			
+			if ($i == 1) {
+				$html .= "<div class='row pl-3'> <h4> ". $linha['id']. " - ". 
+					ucfirst($linha['statement']) ." </h4> </div> <div class='row pl-5'> ";				
+				
+			} else {
+				switch ($type) {
+					case 'mc':
+						if ($i > count($data)) {
+							continue;
+						}
+						if ($i == 2) {
+							$id_right = $linha['correct_alternative'];
+							continue;
+						}						
+						$right = (intval($id_right) == intval($linha['id_alternative'])) ? " - (Right)" : " - (Wrong)";													
+						$html .= " <div class='col-12'> ". str_pad($linha['id_alternative'], 2, "0", STR_PAD_LEFT)
+								." - ".  trim($linha['alternative']). $right ." </div> ";
+						break;
+	
+					case 'tf':
+						$html .= " <div class='col-12'> ". str_pad($linha['id_alternative'], 2, "0", STR_PAD_LEFT)
+								." - [". strtoupper(trim($linha['true_false'])). "] - ".  trim($linha['alternative']). " </div> ";
+						break;
+	
+					case 'fg':
+						$bg_color = '';
+						if ($i == 2 || $i > count($data)) {
+							continue;
+						}
+						if (substr($linha['type'], 0, 2) == "pt" || substr($linha['type'], 0, 2) == "ls") {
+							$tp = "Part ";
+						}
+						if (substr($linha['type'], 0, 2) == "gp") {
+							$tp = "Gap ";
+							$bg_color = ' style="background-color: #fff;"';
+						}																			
+						$html .= " <div class='col-12' ". $bg_color ."> ". $tp ." - ".  trim($linha['alternative']). " </div> ";
+						break;					
+
+					case 'sq':
+						$html .= " <div class='col-12'> - ". trim($linha['alternative']). " </div> ";
+						break;
+				}												
+			}
+		}
+
+		$html .= " </div> ";
+		
+		echo $html;
+	}
+		
+	public function format_preview_db($data)	{
+	
+		$html = "";
+		$question = array();
+		$i = 0;
+		$type = "";
+		
+		foreach ($data as $value) {
+			$i++;
+				
+			if ($i == 1) {
+				switch ($value['id_alternatives_type']) {
+					case 1:
+						$type = "mc";				
+						break;
+					case 2:
+						$type = "tf";				
+						break;
+					case 3:
+						$type = "fg";				
+						break;
+					case 4:
+						$type = "sq";				
+						break;
+				}
+				$array = array(
+					"type" => $type,
+					"id" => $value['id_questions'],
+					"statement" => $value['enunciation']
+				);				
+				array_push($question, $array);
+				
+				$array = array(
+					"correct_alternative" => 1
+				);
+				array_push($question, $array);
+				//continue;				
+			}
+			
+			if ($type == "mc" && $value['right_wrong'] == '1') {
+				$question[1]['correct_alternative'] = $i;
+			}	
+		
+			switch ($type) {
+				case 'mc':
+					$array = array(
+						"id_alternative" => $i,
+						"alternative" => $value['description_alternatives']					
+					);
+					array_push($question, $array);				
+					break;
+
+				case 'tf':
+					$array = array(
+						"id_alternative" => $i,
+						"true_false" => ($value['right_wrong'] == '0' ? "F" : "T"),
+						"alternative" => $value['description_alternatives']					
+					);
+					array_push($question, $array);				
+					break;
+
+				case 'fg':				
+					$qty = 1;
+					if (trim($value['gap_3']) != "") {
+						$qty = 3;
+					
+					} else {
+						if (trim($value['gap_2']) != "") {
+							$qty = 2;							
+						}	
+					}
+				
+					$array = array(
+						"quantity" => $qty
+					);
+					array_push($question, $array);				
+
+					$array = array(
+						"type" => "pt1",
+						"alternative" => $value['title_questions']					
+					);
+					array_push($question, $array);
+									
+					$array = array(
+						"type" => "gp1",
+						"alternative" => $value['description_alternatives']					
+					);
+					array_push($question, $array);				
+
+					if (trim($value['gap_2']) != "" ) {
+						$array = array(
+							"type" => "pt2",	
+							"alternative" => $value['part_2']					
+						);
+						array_push($question, $array);				
+
+						$array = array(
+							"type" => "gp2",
+							"alternative" => $value['gap_2']					
+						);
+						array_push($question, $array);				
+					}
+
+					if (trim($value['gap_3']) != "" ) {											
+						$array = array(
+							"type" => "pt3",	
+							"alternative" => $value['part_3']					
+						);
+						array_push($question, $array);				
+
+						$array = array(
+							"type" => "gp3",
+							"alternative" => $value['gap_3']					
+						);
+						array_push($question, $array);				
+					}
+					$array = array(
+						"type" => "lst",
+						"alternative" => $value['gap_4']					
+					);
+					array_push($question, $array);							
+					break;
+
+				case 'sq':	
+					$array = array(
+						"alternative" => $value['description_alternatives']					
+					);
+					array_push($question, $array);				
+					break;
+			}			
+		}
+
+	//	print_r($question);
+	//	exit;
+				
+		return $question;
+	}
+		
+		
+}		// End Class

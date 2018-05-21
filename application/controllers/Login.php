@@ -11,7 +11,7 @@ class login extends CI_Controller {
 			$error = $this->session->userdata("error_logged");
 			if ( isset($error) ) {
 				if ($error == '1') {					
-					redirect(base_url(''));                                                            
+					redirect(base_url());                                                            
 				}
 			}       
 			$this->load->view('v_login');
@@ -68,9 +68,18 @@ class login extends CI_Controller {
             }                                               
         }
         
-        public function logout(){            
-            $this->session->set_userdata("logged", "0");
-			session_destroy();            
+        public function logout(){
+        	
+			$logged = $this->session->set_userdata("logged", "0");
+			
+			if ($logged == 1) {            
+            	$this->session->set_userdata("logged", "0");
+				session_destroy();
+			
+			} else {
+				$this->clear_all();	
+			}   
+			         
             redirect(base_url());                        
             //redirect("http://localhost/avaleea/");
         }
@@ -170,7 +179,7 @@ class login extends CI_Controller {
         $this->load->view('v_layout', $message);        
     }
  
- 	function save_password_new_user() {
+ 	public function save_password_new_user() {
         	
         if (! $this->m_login->save_password_new_user()) {
             $message = standard_message( 4, "Error in creating the password, notify the administrator in the email: admin@avaleea.com", 
@@ -184,5 +193,34 @@ class login extends CI_Controller {
 		}	
 	}
 
+	public function clear_all() {
+
+		ob_start();
+		$filename = URL_UPL_QUESTIONS. $this->session->userdata('name_file');
+		unlink($filename);
+		
+		$name_cookie = "avaleea_".$this->session->userdata("user");
+						
+		$this->session->sess_destroy();
+		$this->session->set_userdata('logged', "0");
+		$this->session->unset_userdata('source');
+		$this->session->unset_userdata('name_file');
+		$this->session->unset_userdata('file_pointer');
+		$this->session->unset_userdata('save_questions_external');
+		$this->session->unset_userdata("id_edit");		
+		$this->session->unset_userdata("type_edit");
+
+		setcookie('avaleea');							
+//		setcookie('avaleea', '', time() - 3600, "http://localhost/avaleea/home/external_questions");
+		//unset($_COOKIE["avaleea"]);
+
+		setcookie($name_cookie);			
+//		setcookie($name_cookie, '', time() - 3600, ""http://localhost/avaleea/home/external_questions"");
+		//unset($_COOKIE[$name_cookie]);
+		
+		$_COOKIE = array();
+		return TRUE;
+	}
+	
 }
 

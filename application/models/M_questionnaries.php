@@ -215,8 +215,12 @@ class M_questionnaries extends CI_Model {
         return $this->db->get('tbquestionnaries');        
     }    
         
-    function list_questionnaries() {
+    function list_questionnaries($id_questionnaries = 0) {
         	        	
+        if ($id_questionnaries > 0) {
+        	$this->db->where('id_questionnaries', $id_questionnaries);
+		}
+		
         $this->db->where('status', '1');
         return $this->db->get("tbquestionnaries");        
     }
@@ -281,12 +285,7 @@ class M_questionnaries extends CI_Model {
 
         $this->db->where("tbquestionnaries.id_questionnaries", $id_questionnaries);
 
-		$query = $this->db->get("tbquestionnaries")->result_array();
-		//print_r($query);
-		//echo "<br /><br /><br />";
-		//echo $this->db->last_query();  
-		//exit;
-		              
+		$query = $this->db->get("tbquestionnaries")->result_array();		              
         return $query;         
         //return $this->db->get("tbquestionnaries")->result_array();							
 	}
@@ -473,5 +472,94 @@ class M_questionnaries extends CI_Model {
         return TRUE;
     }              
               
-}
+/* 
+***************************************************************************************************
+*
+*		Method of questionnaries external
+*  
+***************************************************************************************************
+*/
+	
+	public function return_tests_external($id_usuario) {
 
+		if ($id_usuario == 0 or is_null($id_usuario)) { return FALSE; } 	
+		
+		$sql = "SELECT a.id_questionnaries AS identify, a.name_questionnaries AS name, COUNT(b.id_questions) AS total
+				FROM tbquestionnaries a, tbquestions b
+				WHERE a.id_people = ". $id_usuario. "
+			 	AND   b.id_questionnaries = a.id_questionnaries
+				AND   a.status = '1'
+				GROUP BY a.id_questionnaries, a.name_questionnaries
+				ORDER BY a.id_questionnaries;";
+					
+		$query = $this->db->query($sql)->result_array();
+		              
+        return $query;         							
+	}	
+	
+	public function return_test_questions($id_test=0) {
+
+		if ($id_test == 0 or is_null($id_test)) { return FALSE; } 	
+		
+		$sql = "SELECT a.id_questions AS identify, a.enunciation AS statement, 
+						c.description_alternatives_type AS type, count(b.id_alternatives) as quantity
+				FROM tbquestions a, tbalternatives b, tbalternatives_type c
+				WHERE a.id_questionnaries = ". $id_test. "
+				AND   a.id_questions = b.id_questions
+				AND   a.id_alternatives_type = c.id_alternatives_type
+				GROUP BY a.id_questions, a.enunciation, c.description_alternatives_type
+				ORDER BY a.id_questions;";
+									
+		$query = $this->db->query($sql)->result_array();
+        return $query;							
+	}	
+	
+	public function return_tests_external_complete($id_usuario) {
+
+		if ($id_usuario == 0 or is_null($id_usuario)) { return FALSE; } 	
+		
+   		$this->db->select("tbquestionnaries.*, tbquestions.*, tbalternatives.*,
+   								 tbquestionnaries.id_questionnaries as id ");
+		
+		$this->db->join("tbquestions", "tbquestions.id_questionnaries = tbquestionnaries.id_questionnaries", 'LEFT');
+		$this->db->join("tbalternatives", "tbalternatives.id_questions = tbquestions.id_questions", 'LEFT');
+
+        $this->db->where("tbquestionnaries.id_people", $id_usuario);
+
+		$query = $this->db->get("tbquestionnaries")->result_array();
+		              
+        return $query;         
+        //return $this->db->get("tbquestionnaries")->result_array();							
+	}	
+	
+	
+	public function save_external($data) {
+			
+		$id = $this->m_setup->return_next_id('tbquestionnaries', 'id_questionnaries');
+
+        $data = array ( 
+            	'id_questionnaries' => $id,        
+                'id_questionnaries_type' => 1,
+                'id_modules' => 1,
+                'id_alternatives_type' => 9,
+                'id_level_type' => 5,
+                'id_situation' => 2,
+                'id_people' => $this->session->userdata("id_people_admin"),
+                'name_questionnaries' => $data['name_questionnaries'],
+                'title_questionnaries' => $data['name_questionnaries'],
+                'description_questionnaries' => "",
+                'instructions_questionnaries' => "",
+                'order_module_questionnaries' => 0,
+                'dt_creation' => date("Y-m-d"),
+                'series_semester' => ""                                                
+        );
+                	            	                                
+        if ($this->db->insert("tbquestionnaries", $data)) { 
+            return $id;
+        } else {
+        	return FALSE;
+		}        
+		
+	}					// End Function
+	                  
+}						// End Class

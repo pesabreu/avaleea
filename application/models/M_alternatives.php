@@ -247,6 +247,68 @@ class M_alternatives extends CI_Model {
         $this->db->where('status', '1');
         return $this->db->get("tbalternatives")->result_array();        
     }
+
+    
+/**************************************************************************************************
+*
+*		Method of alternativess external
+*  
+* **************************************************************************************************/
+
+	public function save_external($data) {
+					
+		$id = $this->m_setup->return_next_id('tbalternatives', 'id_alternatives');
+									
+		switch ($data['type']) {
+			case 'mc':
+			case 'tf':
+			case 'sq':
+				$tf = "";
+				if ($data['type'] == "mc") {
+					$tf = $data['right'];
+				} 
+				if ($data['type'] == "tf") {
+					$tf = $data['tf'];
+				} 
+		
+		        $fields = array ( 
+		            	'id_alternatives' => $id,         
+		                'id_questions' => $data['id_question'],
+		                'id_order_questions' => $data['order'],
+		                'id_situation' => 2,
+		                'description_alternatives' => $data['alternative'],
+		                'text_alternatives' => '',
+		                'right_wrong' => $tf                                                
+		        );
+				break;
+
+			case 'fg':									
+		        $fields = array ( 
+		            	'id_alternatives' => $id,         
+		                'id_questions' => $data['id_question'],
+		                'id_order_questions' => $data['order'],
+		                'id_situation' => 2,
+		                'description_alternatives' => $data['alternative'],
+		                'text_alternatives' => $data['text_alternatives'],
+		                'gap_2' => $data['gap_2'],
+		                'gap_3' => $data['gap_3'],
+		                'right_wrong' => ''                                                
+		        );
+				break;
+							
+			default:				
+				break;
+		}
+            	            	                                
+        if ($this->db->insert("tbalternatives", $fields)) { 
+            return $id;
+        } else {
+        	return FALSE;
+		}        
+		
+	}					// End Function
+
+
                             
-}
+}					// End Class
 

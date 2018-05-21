@@ -91,13 +91,20 @@ class M_questions extends CI_Model {
         $db_debug = $this->db->db_debug; //save setting
         $this->db->db_debug = FALSE; //disable debugging for queries
 
+        $this->db->where("id_questions", $id_questions)->delete("tbalternatives");                
+        $cod_db = $this->db->error();         
+        if (isset($cod_db['message'])) {
+	        $this->db->db_debug = $db_debug; //restore setting
+            return $cod_db['code'];      // FALSE;
+        }
+        
         $this->db->where("id_questions", $id_questions)->delete("tbquestions");                
         $cod_db = $this->db->error(); 
 
         $this->db->db_debug = $db_debug; //restore setting
 
         if (! isset($cod_db['message'])) {
-            return 0;            //TRUE;
+            return TRUE;            //TRUE;
         } else {
             return $cod_db['code'];      // FALSE;
         }
@@ -191,14 +198,20 @@ class M_questions extends CI_Model {
         return $this->db->get("tbquestions");        
     }
 
-    function return_questions_completed($id_questionnaries) {
+    function return_questions_completed($id_questionnaries=0, $id_questions = 0) {
     	
-		if ($id_questionnaries == 0) { return FALSE; }		
+		if ($id_questionnaries == 0 && $id_questions == 0) { return FALSE; }		
 
         $this->db->select("tbquestions.*, tbalternatives.*, tbquestions.id_questions as id ");
 		$this->db->join("tbalternatives", "tbalternatives.id_questions = tbquestions.id_questions", 'LEFT');
         
-        $this->db->where("tbquestions.id_questionnaries", $id_questionnaries);
+		
+		if ($id_questionnaries > 0) { 
+        	$this->db->where("tbquestions.id_questionnaries", $id_questionnaries);
+		}
+		if ($id_questions > 0) {
+			$this->db->where("tbquestions.id_questions", $id_questions);
+		}
         $this->db->order_by("tbquestions.id_questions ASC, tbalternatives.id_alternatives ASC");
         
         return $this->db->get("tbquestions");	
@@ -364,6 +377,64 @@ class M_questions extends CI_Model {
 		$this->session->set_userdata("id_questions_save", $i);  
         return TRUE;
     }              
-              
-}
+
+    
+    
+/**************************************************************************************************
+*
+*		Method of questions external
+*  
+* **************************************************************************************************/
+
+	public function save_external($data) {
+					
+		$id = $this->m_setup->return_next_id('tbquestions', 'id_questions');
+					
+		switch ($data['type']) {
+			case 'mc':
+			case 'tf':
+			case 'sq':											
+		        $fields = array ( 
+		            	'id_questions' => $id,        
+		                'id_questionnaries' => $data['id_test'],
+		                'id_alternatives_type' => 1,
+		                'id_situation' => 2,
+		                'name_questions' => $data['enunciation'],
+		                'title_questions' => '',
+		                'enunciation' => $data['enunciation'],
+		                'order_questionnaries' => $data['order']
+		        );							
+				break;
+
+			case 'fg':							
+		        $fields = array ( 
+		            	'id_questions' => $id,        
+		                'id_questionnaries' => $data['id_test'],
+		                'id_alternatives_type' => 1,
+		                'id_situation' => 2,
+		                'name_questions' => $data['enunciation'],
+		                'title_questions' => $data['title_questions'],
+		                'part_2' => $data['part_2'],
+		                'part_3' => $data['part_3'],
+		                'part_4' => $data['part_4'],
+		                'enunciation' => $data['enunciation'],
+		                'order_questionnaries' => $data['order']
+		        );							
+				break;
+							
+			default:
+				
+				break;
+		}
+            	            	                                
+        if ($this->db->insert("tbquestions", $fields)) { 
+            return $id;
+        } else {
+        	return FALSE;
+		}        
+		
+	}					// End Function
+
+                  
+}						// End Class
 

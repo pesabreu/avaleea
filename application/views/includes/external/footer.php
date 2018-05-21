@@ -1,6 +1,6 @@
 
-
-        <div class="row">
+		<br />
+        <div class="row mt-3 pt-1">
             <div class="bg-primary footer text-center">
                 <a class="navbar-brand mb-3" href="<?= base_url() ?>">
                 	<img src="../includes/img/symbol.png" width="40" height="40" alt="" class="mb-1 mr-3">
@@ -22,6 +22,8 @@
 
 	<?php	
 		include_once "scripts.php";
+		
+		include_once "modal_external.php";
 	?>
 		
 </body>

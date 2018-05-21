@@ -711,4 +711,399 @@ $html .= '  							<!-- botões do form -->
         echo json_encode($return);            
     }
 
-}
+	
+
+/**************************************************************************************************
+*
+*		Method of questionnaires external
+*  
+* **************************************************************************************************/
+
+	public function prepare_preview_test() {
+			
+		$id = $this->input->get("id");
+		$logged = $this->session->userdata("logged");
+		
+		$data = $this->m_questionnaries->return_data_view($id);
+		
+		if ($data) {
+			$html = $this->format_preview($data);
+		
+		} else {	
+			$html = "There are no registered questions to show !"; 
+		}		
+		
+		return $html;
+	}
+	
+
+	public function format_preview($data) {		
+		$html = "";
+		$i = 1;
+		$tot = 0;	
+		$id_question_ant = 0;	
+		
+		foreach ($data as $k => $linha) {			
+			if ($i == 1) {
+				$html .= "<div class='table table-hover'> <div class='row ml-1'> <h4> ". str_pad($linha['id_questionnaries'], 6, "0", STR_PAD_LEFT). " - ". 
+					ucfirst($linha['name_questionnaries']) ." </h4> </div> <div class='row h5 mt-3'> ";				
+			
+				$html .= " <div class='col-2'> Identify </div> "; 
+				$html .= "<div class='col-5'> Name question </div> ";
+				$html .= " <div class='col-3'> Type </div> "; 
+				$html .= "<div class='col-2'> Quantity </div> </div> ";
+				
+				$id_question_ant = $linha['id_questions'];
+				$name_ant = $linha['name_questions'];				
+				$tp = $linha['id_alternatives_type'];								
+			}		
+		
+			if ($id_question_ant != $linha['id_questions']) {
+				
+				switch ($tp) {
+					case 1:
+						$type = "Multiple Choices";
+						break;
+					case 2:
+						$type = "True and False";
+						break;
+					case 3:
+						$type = "Fill in Gap";
+						break;
+					case 4:
+						$type = "Subjective Question";
+						break;											
+					default:
+						return FALSE;
+						break;
+				}
+							
+				$html .= "<div class='row mt-3'> ";							
+				$html .= " <div class='col-2'> ". str_pad($id_question_ant, 6, "0", STR_PAD_LEFT) ." </div> "; 
+				$html .= "<div class='col-5'> ". $name_ant ." </div> ";
+				$html .= " <div class='col-3'> ". ucfirst($type) ." </div> "; 
+				$html .= "<div class='col-2'> &nbsp; &nbsp; ". str_pad($tot, 3, "0", STR_PAD_LEFT) ." </div> </div> ";										
+											
+				$id_question_ant = $linha['id_questions'];
+				$name_ant = $linha['name_questions'];												
+				$tp = $linha['id_alternatives_type'];
+				$tot = 0;												
+			}
+			$tot++;
+			$i++;
+		}	
+				
+		switch ($linha['id_alternatives_type']) {
+			case 1:
+				$type = "Multiple Choices";
+				break;
+			case 2:
+				$type = "True and False";
+				break;
+			case 3:
+				$type = "Fill in Gap";
+				break;
+			case 4:
+				$type = "Subjective Question";
+				break;											
+			default:
+				return FALSE;
+				break;
+		}
+							
+		$html .= "<div class='row mt-3'> ";							
+		$html .= " <div class='col-2'> ". str_pad($linha['id_questions'], 6, "0", STR_PAD_LEFT) ." </div> "; 
+		$html .= "<div class='col-5'> ". $linha['name_questions'] ." </div> ";
+		$html .= " <div class='col-3'> ". ucfirst($type) ." </div> "; 
+		$html .= "<div class='col-2'> &nbsp; &nbsp; ". str_pad($tot, 3, "0", STR_PAD_LEFT) ." </div> </div> </div> ";
+		
+		echo $html;
+	}
+
+	public function save_file_db() {		
+
+		if (! $this->login_external()) {
+			echo  "message", "Incorrect User/Password, retype ! ";
+			return FALSE;
+		}
+		
+		if (! $this->save_test_external()) {
+			echo  "message", " Error insert Test, contact support ! ";
+			return FALSE;			
+		}
+
+							// Erase file questions
+		$filename = URL_UPL_QUESTIONS. $this->session->userdata('name_file');
+		unlink($filename);
+				
+		return TRUE;	
+	}
+		
+	public function login_external() {
+
+        $user = $this->input->post("email_signin_save");
+        $password = $this->input->post("password_signin_save");        
+		
+        $consult = $this->m_users->recovery_user_password($user, $password);
+		 		 		 
+        if (count($consult) == 0) {
+            $this->session->set_userdata("logged", "0");                    
+            echo "Incorrect User/Password, retype ! ";
+			return FALSE;                                       
+            //redirect(base_url('home/external_questions'));                
+			
+			echo "<br /><br /><br /><br />";
+			echo "id people =>". $this->session->userdata("id_people_admin");
+			echo "<br /><br /><br /><br />";
+			print_r($consult);
+			exit;
+                    
+        } else {
+        				
+			$data = array(
+				"id_users" => $consult[0]['id_users'],
+				"id_people" => $consult[0]['id_people']
+			);
+				
+			$this->session->set_userdata("logged", '3');
+			$this->session->set_userdata("user", $user);
+            $this->session->set_userdata("id_users", $consult[0]['id_users']);
+			$this->session->set_userdata("category_user", 5);
+			
+			$this->session->set_userdata("id_people_admin", $consult[0]['id_people']);
+			$this->session->set_userdata("name_user", $user);
+			$this->session->set_userdata("email_admin", $user);
+			        
+			$this->session->set_userdata("id_level_users", 4);
+			$this->session->set_userdata("itens_per_page", $this->m_setup->return_setup()->row()->items_per_page);
+
+        	$this->session->set_userdata("source", 'home');
+			
+			return TRUE;
+		}
+	}
+
+	public function save_test_external() {
+	
+		$name_questionnaries = $this->input->post("name_signin_save");
+		
+		$data = array(
+			"name_questionnaries" => $name_questionnaries 	
+		);
+		
+		$ret = $this->m_questionnaries->save_external($data);		
+		if (! $ret) {
+			return FALSE;					
+		}
+		
+		$id_test = intval($ret);
+
+		$arquivo = $this->session->userdata("name_file");			
+		$file = file(URL_UPL_QUESTIONS.$arquivo); 			// Lê todo o arquivo para um vetor 
+
+		$array = array();
+		$find = FALSE;
+		$right = "";
+		$order = 0;
+		$i = 0;
+		$sbq = FALSE;	
+				
+	    foreach($file as $k => $linha) { // passa linha a linha do arquivo 
+        
+        	$i++;	
+        	if ( (substr($linha, 0, 3) == "   ") || (trim(substr($linha, 0, 3)) == "") ) {
+        		continue;
+        	}
+        				
+			if ( substr($linha, 2, 5) == "start" ) {
+        		$find = TRUE;
+				$type = substr($linha, 10, 2);
+				$order++;
+				$order_alt = 0;										
+				continue;
+			}
+						
+			switch ($type) {
+				case 'mc':
+				case 'tf':
+				case 'sq':		
+					if ( $find && (substr($linha, 0, 3) == "stt" )) {
+						$enunciation = substr($linha, 6);
+		
+						$data = array(
+							"id_test" => $id_test,
+							"type" => $type,
+							"enunciation" => $enunciation,
+							"order" => $order
+						);
+						$ret_q = $this->m_questions->save_external($data);
+						if (! $ret_q) {
+							return FALSE;					
+						}
+						$id_question = intval($ret_q); 
+						continue;				
+					}
+        	
+					if ( $find && (substr($linha, 0, 5) == "right" )) {
+						$right = intval(substr($linha, 11, 1));				
+						continue;				
+					}					        	
+					if ( $find && (substr($linha, 0, 3) == "qty" )) {
+						$qty = intval(substr($linha, 12, 1));
+						continue;				
+					}
+					
+					if (substr($linha, 0, 3) == "asw") {						
+						$rw = "0";
+						if (intval(substr($linha, 3, 1)) == $right) {
+							$rw = "1";	
+						}
+						$order_alt++;
+						
+						$data = array(
+							"id_question" => $id_question,
+							"type" => $type,
+							"alternative" => substr($linha, 7),
+							"right" => $rw,
+							"order" => $order_alt
+						);
+						$ret_q = $this->m_alternatives->save_external($data);
+						if (! $ret_q) {
+							return FALSE;					
+						}
+						continue;											
+					}
+
+					if (substr($linha, 0, 3) == "iss") {
+						$order_alt++;
+												
+						$data = array(
+							"id_question" => $id_question,
+							"type" => $type,
+							"alternative" => substr($linha, 11),
+							"tf" => strtolower(trim(substr($linha, 7))),
+							"order" => $order_alt
+						);
+						$ret_q = $this->m_alternatives->save_external($data);
+						if (! $ret_q) {
+							return FALSE;					
+						}
+						continue;											
+					}						
+					if (substr($linha, 0, 3) == "sbq") {
+						$sbq = TRUE;						
+						$order_alt++;
+						$alternative = substr($linha, 6);
+						continue;											
+					}
+					if ($sbq && trim(substr($linha, 0, 1)) != "") {
+						$order_alt++;
+						$alternative += trim(substr($linha, 0));																	
+						continue;																	
+					}
+											
+					break;
+
+				case 'fg':
+					
+					$pt1 = "";
+					$gp1 = "";
+					$pt2 = "";
+					$gp2 = "";
+					$pt3 = "";
+					$gp3 = "";
+					$lst = "";					
+					
+					if ( $find && (substr($linha, 0, 3) == "stt" )) {
+						$enunciation = substr($linha, 6);
+					}
+					
+					if (substr($linha, 0, 3) == "pt1" ) {
+						$pt1 = substr($linha, 6);
+					}
+					if (substr($linha, 0, 3) == "gp1" ) {
+						$gp1 = substr($linha, 6);
+					}
+					
+					if (substr($linha, 0, 3) == "pt2" ) {
+						$pt2 = substr($linha, 6);
+					}
+					if (substr($linha, 0, 3) == "gp2" ) {
+						$gp2 = substr($linha, 6);
+					}
+					
+					if (substr($linha, 0, 3) == "pt3" ) {
+						$pt3 = substr($linha, 6);
+					}					
+					if (substr($linha, 0, 3) == "gp3" ) {
+						$gp3 = substr($linha, 6);
+					}					
+					
+					if (substr($linha, 0, 3) == "lst" ) {
+						$lst = substr($linha, 6);
+					}					
+
+					if ( substr($linha, 2, 3) == "end" ) {
+						$data = array(
+							"id_test" => $id_test,
+							"type" => $type,
+							"enunciation" => $enunciation,
+							"title_questions" => $pt1,
+							"part_2" => $pt2,
+							"part_3" => $pt3,
+							"part_4" => $lst,
+							"order" => $order							
+						);	
+						$ret_q = $this->m_questions->save_external($data);
+						if (! $ret_q) {
+							return FALSE;					
+						}
+						$id_question = intval($ret_q); 
+
+						$data = array(
+							"id_question" => $id_question,
+							"type" => $type,
+							"text_alternatives" => $gp1,
+							"gap_2" => $gp2,
+							"gap_3" => $gp3,
+							"order" => 1
+						);
+						$ret_q = $this->m_alternatives->save_external($data);
+						if (! $ret_q) {
+							return FALSE;					
+						}
+
+		        		$find = FALSE;
+						$id_question = 0;
+						$sbq = FALSE;
+						continue;
+					}
+					break;
+													
+				default:					
+					break;
+			}
+		
+			if ( substr($linha, 2, 3) == "end" ) {
+				if ($sbq) {																		
+					$data = array(
+						"id_question" => $id_question,
+						"type" => $type,
+						"alternative" => $alternative,
+						"order" => 1
+					);
+					$ret_q = $this->m_alternatives->save_external($data);
+					if (! $ret_q) {
+						return FALSE;					
+					}					
+				}				
+        		$find = FALSE;
+        		$sbq = FALSE;
+				$id_question = 0;
+				continue;
+			}
+		}
+		return TRUE;
+	}		
+
+}		// End Class

@@ -30,8 +30,11 @@ class M_login extends CI_Model {
 							 
 			$this->db->join("tbpeople", "tbpeople.id_people = tbusers.id_people", 'LEFT');								
 			$this->db->join("tbweb_contact", "tbweb_contact.id_people = tbusers.id_people", 'LEFT');
-					            
-            $consult = $this->db->get_where("tbusers", array("login" => $user))->row();
+				
+			$this->db->like("login", trim($user));	
+			$consult = $this->db->get("tbusers")->row();		      
+						        
+            //$consult = $this->db->get_where("tbusers", array("login" => $user))->row();
             return $consult;        
         }
 		
@@ -120,9 +123,5 @@ class M_login extends CI_Model {
 		return $ret;           
 	}	
 	
-	
-	
-	
-
 }
 

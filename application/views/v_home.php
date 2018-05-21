@@ -1,7 +1,7 @@
 
 <?php    
     $var = $this->session->userdata("logged");
-    $logged = isset($var) ? $var : 0;
+    $logged = isset($var) ? $var : '0';
 
     $var = $this->session->userdata("external_questions");
     $external_questions = isset($var) ? $var : FALSE;
@@ -20,7 +20,7 @@
 				include_once "includes/external_page.php";		// show external page
 			
 			} else {						
-				if ( $logged ) {		
+				if ( $logged == '1') {		
 					//include "includes/menu.php";				// show administrative menu			
 					include_once "v_control_panel.php";			// show new administrative menu
 					

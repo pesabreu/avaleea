@@ -16,7 +16,7 @@
         $logged = $CI->session->userdata("logged");        
 		$ret = TRUE;
 		
-        if ($logged != 1) {
+        if ($logged < 1 || $logged > 2) {
             $ret = FALSE;	
             redirect(base_url('login'));
         }
@@ -676,5 +676,30 @@
 		return $msg;
 	}	
 	
+	
+	function renumber_questions_file() {
+		$CI =& get_instance();			
+
+		$arquivo = $CI->session->userdata("name_file");			
+		$file = file(URL_UPL_QUESTIONS.$arquivo); 			// Lê todo o arquivo para um vetor 
+
+		$i = 0;
+	    foreach($file as $k => $linha) {					// passa linha a linha do arquivo 
+									
+			if ( substr($linha, 2, 5) == "start" ) {
+	        	$i++;	 
+	        	$num = str_pad( $i, 3, "0", STR_PAD_LEFT);
+				$p1 = substr($linha, 0, 15);
+				$p2 = substr($linha, 18);
+				$file[$k] = $p1. $num .$p2;	
+			}
+ 		} 
+		     	 
+    	file_put_contents(URL_UPL_QUESTIONS.$arquivo, $file);		// Reescrevendo o arquivo	
+
+		$CI->session->set_userdata("save_questions_external", $i);
+
+		return TRUE;
+	}
 	
 	
