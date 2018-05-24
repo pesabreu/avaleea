@@ -392,4 +392,5 @@ class users extends MY_controller {
 		
 		return TRUE;		
 	}
+
 }

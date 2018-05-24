@@ -1,9 +1,16 @@
 
 <?php
+	$cookie = unserialize($_COOKIE['avaleea']);
 	$var = $this->session->userdata("id_test");
-	$id_test = isset($var) ? $var : 0;
+	$id_test = isset($var) ? $var : 0;	
+	if ($id_test == 0) {
+		$id_test = $cookie["id_test"];
+	}
 	
 	$logged = $this->session->userdata("logged");
+	if ($logged == "0") {
+		$logged = $cookie["logged"];
+	}
 ?>
 
 	<div id="div_list_tests" name="div_list_tests" style="border: 0 solid #0033ff; height: 100%; min-height: 458px; margin-top: 1px;">		
@@ -25,7 +32,7 @@
 
 					<div class="col-1">
 					  <div class="btn-group btn-group-md ml-3 pl-5 mr-1" role="group" aria-label="Second group">
-						<button type="button" class="btn btn-outline-info" id="btn-edit" name="btn-edit">
+						<button type="button" class="btn btn-outline-info" id="btn-edit-qu" name="btn-edit-qu">
 							<i class="ion ion-edit"></i>
 							Edit
 						</button>

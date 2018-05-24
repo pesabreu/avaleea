@@ -79,7 +79,7 @@
 			$('#chosen_option').val('sq');
 		});
 		
-		var img = '../includes/img/right.png';
+		var img = 'includes/img/right.png';
 		
 		$('#right-wrong1').click(function(event){
 			right_wrong();
@@ -364,7 +364,7 @@
             //alert('btn-img-statement');
 		});
 
-        $('#form_questions').submit(function(e) {
+        $('#form_questions1').submit(function(e) {
             e.preventDefault();
 
 			if ( $('#text-statement').val() == "  Type your Question " || $('#text-statement').val() == "") {
@@ -375,18 +375,18 @@
 
             var formulario = $(this); 
             var dados = formulario.serialize();								
- 			//alert(dados);
+ 			alert(dados);
  			
             $.ajax({
             	type: 'POST',
-                url : base_url + 'questions/save_external/',
+                url : base_url + 'home/save_external/',
                 data: dados,
                 dataType: 'text',
-//		       	cache: false,				       
+		       	cache: false,				       
 			   	async:  true
 			
 			}).done(function(data) {
-				//alert(data);
+				alert(data);
 				
 				var logged = "<?= $this->session->userdata('logged') ?>";
 				if (logged == 2) {
@@ -442,10 +442,10 @@
  			
             $.ajax({
             	type: 'POST',
-                url : base_url + 'users/login_external/',
+                url : base_url + 'home/login_external/',
                 data: dados,
                 dataType: 'text',
-//		       	cache: false,				       
+		       	cache: false,				       
 			   	async:  true
 			
 			}).done(function(data) {
@@ -485,10 +485,10 @@
  			
             $.ajax({
             	type: 'POST',
-                url : base_url + 'users/save_external/',
+                url : base_url + 'home/save_external/',
                 data: dados,
                 dataType: 'text',
-//		       	cache: false,				       
+		       	cache: false,				       
 			   	async:  true
 			
 			}).done(function(data) {
@@ -521,7 +521,7 @@
 			
             $.ajax({
             	type: 'GET',
-                url : base_url + 'users/search_email/',
+                url : base_url + 'home/search_email/',
                 data: "email=" + email,
                 dataType: 'text',				       
 			   	async:  true
@@ -545,7 +545,7 @@
             });           						
 		});
 				
-		$('#btn-edit').click(function(e){
+		$('#btn-edit-qu').click(function(e){
 			e.preventDefault();
 			
 			var el = $("input[name=radio-test]:checked").attr('id');			
@@ -558,7 +558,7 @@
 										
             $.ajax({
             	type: 'GET',
-                url : base_url + 'questions/edit_questions_file/',
+                url : base_url + 'home/external_questions/edit_questions_file',
                 data: {id:id, type:type, id_test:id_test},
                 dataType: 'text',
 			   	async:  true
@@ -580,7 +580,7 @@
 										
             $.ajax({
             	type: 'GET',
-                url : base_url + 'questions/edit_questions_db/',
+                url : base_url + 'home/edit_questions_db/',
                 data: "id=" + id,
                 dataType: 'text',
 			   	async:  true
@@ -602,7 +602,7 @@
 			
             $.ajax({
             	type: 'GET',
-                url : base_url + 'questions/delete_questions_file/',
+                url : base_url + 'home/delete_questions_file/',
                 data: "id=" + el.substr(7),
                 dataType: 'text',
 			   	async:  true
@@ -625,7 +625,7 @@
 			
             $.ajax({
             	type: 'GET',
-                url : base_url + 'questionnaries/prepare_preview_test/',
+                url : base_url + 'home/prepare_preview_test/',
                 data: "id=" + el.substr(5),
                 dataType: 'text',
 			   	async:  true
@@ -649,7 +649,7 @@
 			
             $.ajax({
             	type: 'GET',
-                url : base_url + 'questions/prepare_preview_questions/',
+                url : base_url + 'home/prepare_preview_questions/',
                 data: "id=" + el.substr(7),
                 dataType: 'text',
 			   	async:  true
@@ -680,7 +680,7 @@
 						
             $.ajax({
             	type: 'GET',
-                url : base_url + 'questionnaries/save_file_db/',
+                url : base_url + 'home/save_file_db/',
                 data: "name=" + name,
                 dataType: 'text',
 			   	async:  true
@@ -726,10 +726,10 @@
  			
             $.ajax({
             	type: 'POST',
-                url : base_url + 'questionnaries/save_file_db/',
+                url : base_url + 'home/save_file_db/',
                 data: dados,
                 dataType: 'text',
-//		       	cache: false,				       
+		       	cache: false,				       
 			   	async:  true
 			
 			}).done(function(data) {
@@ -789,9 +789,9 @@
 			
 		function type_question() {
 			var tipo = "<?=	isset($type_edit) ? $type_edit : ''; ?>";
-			var qty = "<?= $this->session->userdata("qty") ?>";
+			var qty = "<?= $this->session->userdata("quantity") ?>";
 			
-			if (tipo != "mc" && tipo != "mu" && tipo != "1" && tipo != 1 || tipo == "" || tipo == null) {
+			if ((tipo != "mc" && tipo != "mu" && tipo != "1" && tipo != 1) || tipo == "" || tipo == null) {
 				$('#div-answers-mc').hide();
 				$('#div-answer1').hide();
 				$('#div-answer2').hide();
@@ -802,7 +802,7 @@
 				$('#div-answer5').hide();			
 			}
 
-			if (tipo != "tf" && tipo != "tr" && tipo != "2" && tipo != 2 || tipo == "" || tipo == null) {						
+			if ((tipo != "tf" && tipo != "tr" && tipo != "2" && tipo != 2) || tipo == "" || tipo == null) {						
 				$('#div-answers-tf').hide();
 				$('#div-tf1').hide();
 				$('#div-tf2').hide();
@@ -827,7 +827,7 @@
 				}				
 			}
 						
-			if (tipo != "fg" && tipo != "fi" && tipo != "3" && tipo != 3 || tipo == "" || tipo == null) {						
+			if ((tipo != "fg" && tipo != "fi" && tipo != "3" && tipo != 3) || tipo == "" || tipo == null) {						
 				$('#div-answers-fg').hide();
 				$('#num_gaps').hide();
 				$('#opt_gaps').hide();
@@ -852,7 +852,7 @@
 				}
 			}
 			
-			if (tipo != "sq" && tipo != "su" && tipo != "4" && tipo != 4 || tipo == "" || tipo == null) {									
+			if ((tipo != "sq" && tipo != "su" && tipo != "4" && tipo != 4) || tipo == "" || tipo == null) {									
 				$('#div-answers-sq').hide();
 				$('#div-text-sq').hide();
 				$('#text-sq').hide();
@@ -870,7 +870,7 @@
 		}
 		
 		function right_wrong() {						
-			var imagem = '../includes/img/wrong.png';			
+			var imagem = 'includes/img/wrong.png';			
 			var img = '<img class="img-fluid" src="'+ imagem +'" height="30px" style="margin-top: -4px;">';
 		
 			$('#span-rw1').html(img);

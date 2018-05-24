@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Avaleea</title>
-		<link rel="shortcut icon" href="<?= URL_IMG.'symbol.png' ?>" type="image/x-icon" />
+		<link rel="shortcut icon" href="<?= base_url('includes/img/symbol.png') ?>" type="image/x-icon" />
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
@@ -27,14 +27,20 @@
 
 <?php 
 	//$usuario = "pesabreu@pesabreu.com";
-		
-    $var = $this->session->userdata("logged");
+	$cookie = unserialize($_COOKIE['avaleea']);
+	
+	$var = $this->session->userdata("logged");
 	$logged = isset($var) ? $var : "0";
-	$usuario = 'Not logged in';
-
+	if ($logged == "0") {
+		$logged = $cookie["logged"];	
+	}
+	
 	if ($logged == "2" || $logged == "3") {	
 	    $var = $this->session->userdata("name_user");
-   		$usuario = isset($var) ? (trim($var) != "") ? $var : 'User name missing' : 'Not logged in';	
+		$usuario = isset($var) ? $var : "";
+		if (trim($usuario) == "") {
+	   		$usuario = (trim($cookie["name_user"]) != "") ? $cookie["name_user"] : 'Not logged in';	
+		}
 	}		 	
 ?>
 
@@ -43,7 +49,7 @@
 			<div class="row">
 				<nav class="navbar fixed-top navbar-expand-md navbar-light bg-primary">
 					<a class="navbar-brand ml-3" href="<?= base_url() ?>">
-						<img src="../includes/img/symbol.png" width="40" height="40" alt="" class="mb-1 mr-3">				
+						<img src="<?= base_url('includes/img/symbol.png') ?>" width="40" height="40" alt="" class="mb-1 mr-3">				
 						<span class="h3" style="font-family: 'Comic Sans MS'; color: #fff;">Avaleea</span> 
 						<span class="h6" style="color: #ffff60;">Test Maker</span>
 					</a>
@@ -84,4 +90,3 @@
 					</div>
 				</nav>
 			</div>
-

@@ -1,10 +1,12 @@
 
-
-
 	<div class="container mt-5 pl-5" id="content-external">
 
         <?php
-    		$logged = $this->session->userdata("logged");
+			$logged = $this->session->userdata("logged");
+			if ($logged == "0") {
+				$cookie = unserialize($_COOKIE['avaleea']);
+				$logged = $cookie["logged"];
+			}
     		                          
         	if ( (count($tests) > 0 && trim($action) == "") 
         	 || ( trim($action) == "dashboard" ) 
@@ -51,14 +53,7 @@
 					case 'edit_questions':
 			            include_once "buttons.php";	
 			            include_once "statement.php";
-					
-/*							
-			echo "<br /><br /><br /><br /> inicio =>";
-			echo strtolower($type_edit);
-			//print_r($value);
-			echo "<br />";
-			//exit;									
-*/												
+																
 						switch (strtolower($type_edit)) {
 							case 'mc':
 							case 'mu':	
@@ -76,7 +71,8 @@
 								break;
 							
 							case 'sq':
-							case 'su':	
+							case 'su':
+								include_once "statement.php";	
 								include_once "subjectivequestions.php";
 								break;
 						}						

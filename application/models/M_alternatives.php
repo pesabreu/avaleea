@@ -255,11 +255,27 @@ class M_alternatives extends CI_Model {
 *  
 * **************************************************************************************************/
 
-	public function save_external($data) {
+	public function save_external($data, $parm=0) {
 					
-		$id = $this->m_setup->return_next_id('tbalternatives', 'id_alternatives');
-									
-		switch ($data['type']) {
+		$ret = $this->return_alternatives_candidate($data['id_question'], $data['order']);
+		if (count($ret) > 0){
+			$update = TRUE;
+			$id = $ret[0]['id_alternatives'];
+			$order = $data['order'];
+		} else {
+			$update = FALSE;
+			$id = $this->m_setup->return_next_id('tbalternatives', 'id_alternatives');
+			$order = $this->return_next_order($data['id_question']);
+		}
+/*		
+		echo "<br /><br /> M alternatives => ". $data['type']. " - " .$data['order']  .">>><br /><br />";
+		print_r($data);										
+		echo "<br /><br />";										
+		if ($data['order'] > 2) {
+			exit;
+		}						
+*/											
+		switch (trim($data['type'])) {
 			case 'mc':
 			case 'tf':
 			case 'sq':
@@ -268,13 +284,12 @@ class M_alternatives extends CI_Model {
 					$tf = $data['right'];
 				} 
 				if ($data['type'] == "tf") {
-					$tf = $data['tf'];
+					$tf = strtoupper(trim($data['tf'])) == 'T' ? 1 : 0;
 				} 
 		
-		        $fields = array ( 
-		            	'id_alternatives' => $id,         
+		        $fields = array ( 		            	        
 		                'id_questions' => $data['id_question'],
-		                'id_order_questions' => $data['order'],
+		                'id_order_questions' => $order,
 		                'id_situation' => 2,
 		                'description_alternatives' => $data['alternative'],
 		                'text_alternatives' => '',
@@ -283,13 +298,12 @@ class M_alternatives extends CI_Model {
 				break;
 
 			case 'fg':									
-		        $fields = array ( 
-		            	'id_alternatives' => $id,         
+		        $fields = array (		            	         
 		                'id_questions' => $data['id_question'],
-		                'id_order_questions' => $data['order'],
+		                'id_order_questions' => $order,
 		                'id_situation' => 2,
 		                'description_alternatives' => $data['alternative'],
-		                'text_alternatives' => $data['text_alternatives'],
+		                'text_alternatives' => '',
 		                'gap_2' => $data['gap_2'],
 		                'gap_3' => $data['gap_3'],
 		                'right_wrong' => ''                                                
@@ -298,17 +312,39 @@ class M_alternatives extends CI_Model {
 							
 			default:				
 				break;
-		}
-            	            	                                
-        if ($this->db->insert("tbalternatives", $fields)) { 
-            return $id;
-        } else {
-        	return FALSE;
-		}        
+		}	
+
+		if (! $update) {
+			$fields['id_alternatives'] = $id;            	            	                                
+	        if ($this->db->insert("tbalternatives", $fields)) { 
+	            return $id;
+	        } else {
+	        	return FALSE;
+			}        
+		
+		} else {
+			$this->db->where("id_alternatives", $id);
+	        if ($this->db->update("tbalternatives", $fields)) { 
+	            return $id;
+	        } else {
+	        	return FALSE;
+			}        
+		}		
 		
 	}					// End Function
 
-
+	function return_next_order($id_questions) {
+					
+		$this->db->select_max('id_order_questions');
+		$this->db->where('id_questions', $id_questions);
+		
+		$query = $this->db->get("tbalternatives");
+		//echo $this->db->last_query();
+		
+		$order = $query->row()->id_order_questions;		 
+		return $order + 1;
+	}  
+    
                             
 }					// End Class
 

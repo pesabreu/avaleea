@@ -387,54 +387,93 @@ class M_questions extends CI_Model {
 * **************************************************************************************************/
 
 	public function save_external($data) {
-					
-		$id = $this->m_setup->return_next_id('tbquestions', 'id_questions');
-					
+		
+		$type = 0;
+		
 		switch ($data['type']) {
 			case 'mc':
+				$type = 1;
+				break;
 			case 'tf':
-			case 'sq':											
+				$type = 2;
+				break;
+			case 'fg':
+				$type = 3;
+				break;
+			case 'sq':
+				$type = 4;
+				break;
+		}		
+										
+		switch ($data['type']) {
+			case 'mc':				
+			case 'tf':
+			case 'sq':
 		        $fields = array ( 
-		            	'id_questions' => $id,        
 		                'id_questionnaries' => $data['id_test'],
-		                'id_alternatives_type' => 1,
+		                'id_alternatives_type' => $type,
 		                'id_situation' => 2,
-		                'name_questions' => $data['enunciation'],
+		                'name_questions' => $data['statement'],
 		                'title_questions' => '',
-		                'enunciation' => $data['enunciation'],
+		                'enunciation' => $data['statement'],
 		                'order_questionnaries' => $data['order']
 		        );							
 				break;
 
 			case 'fg':							
 		        $fields = array ( 
-		            	'id_questions' => $id,        
 		                'id_questionnaries' => $data['id_test'],
-		                'id_alternatives_type' => 1,
+		                'id_alternatives_type' => $type,
 		                'id_situation' => 2,
-		                'name_questions' => $data['enunciation'],
-		                'title_questions' => $data['title_questions'],
+		                'name_questions' => $data['statement'],
+		                'title_questions' => '',
 		                'part_2' => $data['part_2'],
 		                'part_3' => $data['part_3'],
 		                'part_4' => $data['part_4'],
-		                'enunciation' => $data['enunciation'],
+		                'enunciation' => $data['statement'],
 		                'order_questionnaries' => $data['order']
 		        );							
 				break;
 							
-			default:
-				
+			default:				
 				break;
 		}
-            	            	                                
-        if ($this->db->insert("tbquestions", $fields)) { 
-            return $id;
-        } else {
-        	return FALSE;
-		}        
-		
-	}					// End Function
+					
+		$id_edit = $data['id_edit'];
 
+		if ($id_edit == 0) {
+			$id = $this->m_setup->return_next_id('tbquestions', 'id_questions');			
+			$fields['id_questions'] = $id;
+																		            
+	        if ($this->db->insert("tbquestions", $fields)) { 
+	            return $id;
+	        } else {
+	        	return FALSE;
+			}        
+		
+		} else {
+			$this->db->where("id_questions", $id_edit);
+	        if ($this->db->update("tbquestions", $fields)) { 
+	            return $id_edit;
+	        } else {
+	        	return FALSE;
+			}        
+		}		
+	}					// End Function
+         
+
+	function return_next_order($id_questionnaries) {
+					
+		$this->db->select_max('order_questionnaries');
+		$this->db->where('id_questionnaries', $id_questionnaries);
+		
+		$query = $this->db->get("tbquestions");
+		//echo $this->db->last_query();
+		
+		$order = $query->row()->order_questionnaries;		 
+		return $order + 1;
+	}  
+                  
                   
 }						// End Class
 

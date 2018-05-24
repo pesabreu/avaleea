@@ -1,13 +1,17 @@
 
 
-<?php 
-	//print_r($tests);
+<?php 	
 	$id = isset($id_edit) ? $id_edit : 0;
 	$id_test = isset($id_test) ? $id_test : 0;
-
+	
 	$type_edit = $this->session->userdata("type_edit");
 	$qty = $this->session->userdata("qty");
-
+	
+	if (trim($type_edit) == "" ) {
+		$cookie = unserialize($_COOKIE['avaleea']);
+		$type_edit = $cookie["type_edit"];
+		$qty = $cookie["quantity"];
+	}
 ?> 
 
 			<!-- button add questions -->
@@ -32,7 +36,7 @@
 
 			<input type="hidden" id="chosen_option" name="chosen_option" value="">
  			<input type="hidden" id="id_edit" name="id_edit" value="<?= $id ?>">
- 			<input type="hidden" id="id_tests" name="id_test" value="<?= $id_test ?>"> 		
+ 			<input type="hidden" id="id_test" name="id_test" value="<?= $id_test ?>"> 		
  			<input type="hidden" id="name_test" name="name_test" value="">
  			 		
 		</form>			

@@ -1,14 +1,16 @@
 
 
 <?php
-
-	$var = $this->session->userdata("logged");
-	$logged = isset($var) ? ($var == 2 ? FALSE : TRUE) : FALSE;
-
+	
+	$logged = $this->session->userdata("logged");
+	if ($logged == "0") {
+		$cookie = unserialize($_COOKIE['avaleea']);
+		$logged = $cookie["logged"];
+	}
 ?>
 		<!-- Buttons -->
-    	<div class="row wrapper text-center d-flex justify-content-center align-items-start mt-2">
-				<div class="row" style="margin-top: 10px;">  <!-- Functions new, view, save, save & new -->
+    	<div class="row wrapper text-center d-flex justify-content-center align-items-start mt-2 container-fluid">
+				<div class="row" style="margin-top: 20px;">  <!-- Functions new, view, save, save & new -->
 				
 					<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" id="div_toolbar" name="div_toolbar">
 						<div class="col-2"></div>	
@@ -100,7 +102,7 @@
 			</div>	<!-- end Wrapper -->
 
 			
-			<div class="row mt-1" id="hr-btn-functions" style="border: 2px ridge #007BFF;"> </div>  <!-- HR -->			
+			<div class="row mt-1 mb-5" id="hr-btn-functions" style="border: 2px ridge #007BFF;"> </div>  <!-- HR -->			
 		
 			<div class="row text-center d-flex justify-content-center align-items-start my-3" id="div_type_questions" name="div_type_questions">  <!-- select Type Questions -->
 				<div class="btn-group btn-group-toggle" data-toggle="buttons" id="btn_type_questions" name="btn_type_questions">

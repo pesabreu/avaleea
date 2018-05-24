@@ -350,14 +350,19 @@ class questions extends MY_controller {
 
 	public function save_external() {
 
-		ini_set('display_errors', 1);
-		error_reporting(E_ALL);
+		//ini_set('display_errors', 1);
+		//error_reporting(E_ALL);
 	
 		$total_questions = $this->session->userdata("save_questions_external");
 
     	$logged = $this->session->userdata("logged");
-
-    	if ($logged == "2") {    	
+		
+		echo "<br /><br /> save external <br />";
+		echo "log => ". $logged ."<br />";
+	
+    	if ($logged == "2") {
+    		echo "<br /><br /> SAlva arquivo<br />";
+			    	
 			$total_questions = $this->save_external_file();
 
 		} else {
@@ -388,6 +393,9 @@ class questions extends MY_controller {
 				return FALSE;
 			}			
 		}
+		
+		echo "<br /><br /> external file <br />";
+		echo "fp => ". $fp ."<br />";
 		
 		$tot_bytes = filesize(URL_UPL_QUESTIONS.$arquivo);		
 		
@@ -531,7 +539,7 @@ class questions extends MY_controller {
 		echo "<br /><br />";
 		echo "<br /> id - type => ". $id_edit ." - ". $type_question ."<br />";
 				
-		if ($id_edit != "0" && trim($type_question) != "" && $type_question != '') {								
+		if ($id_edit != "0" && trim($type_question) != "" && $type_question != "") {								
 			$this->delete_questions_file(1, $id_edit);			
 			renumber_questions_file();		
 		}
@@ -541,8 +549,8 @@ class questions extends MY_controller {
 
 	public function save_external_db() {
 				
-		print_r($_POST);
-		exit;
+		//print_r($_POST);
+		//exit;
 		
 		$tot_questions = 0;
 

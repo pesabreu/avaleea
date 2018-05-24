@@ -21,9 +21,11 @@
 						<div class="col-1 bg-info" style="margin-left: 130px; height: 30px; padding-top: 2px;">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong1" value="right-wrong1" 						
-								<?= isset($tests[1]['rw']) ? ($tests[1]['rw'] == 'r' ? 'checked' : '') : ''; ?>>
+								<?= isset($tests[1]['right']) ? ($tests[1]['right'] == 'r' ? ' checked ' : '') : ''; ?>>
 								
-								<span id="span-rw1"> <img class="img-fluid" src="../includes/img/right.png" height="10px" style="margin-top: -4px;"> </span>
+								<span id="span-rw1"> <img class="img-fluid" 
+									src="<?php echo ($tests[1]['right'] == 'w') ? base_url('includes/img/wrong.png') : base_url('includes/img/right.png'); ?>"
+									height="10px" style="margin-top: -4px;"> </span>
 							</div>
 						</div>
 					</div>
@@ -39,9 +41,11 @@
 						</div>
 						<div class="col-1 bg-info" style="margin-left: 130px; height: 30px; padding-top: 2px;">
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong2" value="right-wrong2">
-								<?= isset($tests[2]['rw']) ? ($tests[2]['rw'] == 'r' ? 'checked' : '') : ""; ?>
-								<span id="span-rw2"> <img class="img-fluid" src="../includes/img/wrong.png" height="30px" style="margin-top: -4px;"> </span>
+								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong2" value="right-wrong2"
+								<?= isset($tests[2]['right']) ? ($tests[2]['right'] == 'r' ? ' checked ' : '') : ""; ?>>
+								<span id="span-rw2"> <img class="img-fluid" 
+									src="<?php echo ($tests[2]['right'] == 'w') ? base_url('includes/img/wrong.png') : base_url('includes/img/right.png'); ?>" 
+									height="30px" style="margin-top: -4px;"> </span>
 							</div>
 						</div>						
 					</div>
@@ -70,9 +74,11 @@
 						</div>
 						<div class="col-1 bg-info" style="margin-left: 130px; height: 30px; padding-top: 2px;">
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong3" value="right-wrong3">
-								<?= isset($tests[3]['rw']) ? ($tests[3]['rw'] == 'r' ? 'checked' : '') : ""; ?>
-								<span id="span-rw3"> <img class="img-fluid" src="../includes/img/wrong.png" height="20px" style="margin-top: -4px;"> </span>
+								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong3" value="right-wrong3"
+								<?= isset($tests[3]['right']) ? ($tests[3]['right'] == 'r' ? ' checked ' : '') : ""; ?>>
+								<span id="span-rw3"> <img class="img-fluid" 
+									src="<?php echo ($tests[3]['right'] == 'w') ? base_url('includes/img/wrong.png') : base_url('includes/img/right.png'); ?>" 
+									height="20px" style="margin-top: -4px;"> </span>
 							</div>
 						</div>												
 					</div>
@@ -101,9 +107,11 @@
 						</div>
 						<div class="col-1 bg-info" style="margin-left: 130px; height: 30px; padding-top: 2px;">
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong4" value="right-wrong4">
-								<?= isset($tests[4]['rw']) ? ($tests[4]['rw'] == 'r' ? 'checked' : '') : ""; ?>
-								<span id="span-rw4"> <img class="img-fluid" src="../includes/img/wrong.png" height="20px" style="margin-top: -4px;"> </span>
+								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong4" value="right-wrong4"
+								<?= isset($tests[4]['right']) ? ($tests[4]['right'] == 'r' ? ' checked ' : '') : ""; ?>>
+								<span id="span-rw4"> <img class="img-fluid" 
+									src="<?php echo ($tests[4]['right'] == 'w') ? base_url('includes/img/wrong.png') : base_url('includes/img/right.png'); ?>"
+									height="20px" style="margin-top: -4px;"> </span>
 							</div>
 						</div>												
 					</div>
@@ -132,9 +140,11 @@
 						</div>
 						<div class="col-1 bg-info" style="margin-left: 130px; height: 30px; padding-top: 2px;">
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong5" value="right-wrong5">
-								<?= isset($tests[5]['rw']) ? ($tests[5]['rw'] == 'r' ? 'checked' : '') : ""; ?>
-								<span id="span-rw5"> <img class="img-fluid" src="../includes/img/wrong.png" height="20px" style="margin-top: -4px;"> </span>
+								<input class="form-check-input" type="radio" name="right-wrong" id="right-wrong5" value="right-wrong5"
+								<?= isset($tests[5]['right']) ? ($tests[5]['right'] == 'r' ? ' checked ' : '') : ""; ?>>
+								<span id="span-rw5"> <img class="img-fluid" 
+									src="<?php echo ($tests[5]['right'] == 'w') ? base_url('includes/img/wrong.png') : base_url('includes/img/right.png'); ?>" 
+									height="20px" style="margin-top: -4px;"> </span>
 							</div>
 						</div>
 					</div>

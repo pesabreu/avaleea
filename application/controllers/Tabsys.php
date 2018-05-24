@@ -172,7 +172,7 @@ class tabsys extends MY_controller {
         $this->session->set_userdata("field", $field);
         $this->session->set_userdata("order", $order);
         
-        redirect(base_url('users'));                
+        redirect(base_url());                
     }
 
     public function window_data_complete_tabsys() {

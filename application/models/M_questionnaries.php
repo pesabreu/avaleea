@@ -537,6 +537,12 @@ class M_questionnaries extends CI_Model {
 			
 		$id = $this->m_setup->return_next_id('tbquestionnaries', 'id_questionnaries');
 
+		$id_people = $this->session->userdata("id_people_admin") ? $this->session->userdata("id_people_admin") : 0;		
+		if ($id_people == 0) {
+			$cookie = unserialize($_COOKIE['avaleea']);
+			$id_people = $cookie["id_people_admin"];			
+		}
+
         $data = array ( 
             	'id_questionnaries' => $id,        
                 'id_questionnaries_type' => 1,
@@ -544,7 +550,7 @@ class M_questionnaries extends CI_Model {
                 'id_alternatives_type' => 9,
                 'id_level_type' => 5,
                 'id_situation' => 2,
-                'id_people' => $this->session->userdata("id_people_admin"),
+                'id_people' => $id_people,
                 'name_questionnaries' => $data['name_questionnaries'],
                 'title_questionnaries' => $data['name_questionnaries'],
                 'description_questionnaries' => "",

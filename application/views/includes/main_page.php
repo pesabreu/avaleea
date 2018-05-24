@@ -23,10 +23,10 @@
 				
 				<div class="col-md-4"></div>
 				<div class="col-md-2">
-					<a href="<?=base_url('home/external_questions')?>" class="btn btn-primary btn-lg"> Criar Questões</a>
+					<a href="<?=base_url('home/external_questions')?>" class="btn btn-primary btn-lg"> Create tests</a>
 				</div>
 				<div class="col-md-2">
-					<a href="<?=base_url('home/external_test')?>" class="btn btn-info btn-lg"> Aplicar Teste</a>
+					<a href="<?=base_url('home/external_test')?>" class="btn btn-info btn-lg"> Apply tests</a>
 				</div>
 				<div class="col-md-4"></div>
 				

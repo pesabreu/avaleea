@@ -5,16 +5,16 @@
 	//print_r($tests);
 	//exit;
 	
-	$qty = isset($tests[1]['qty']) ? $tests[1]['qty'] : 0;
+	$qty = $tests[1]['qty'];
 	
 	if (intval($qty) == 1) {
-		$last = isset($tests[3]['lst']) ? $tests[3]['lst'] : '';
+		$last = isset($tests[4]['pt2']) ? $tests[4]['pt2'] : '';
 	}	
 	if (intval($qty) == 2) {
-		$last = isset($tests[6]['lst']) ? $tests[6]['lst'] : '';
+		$last = isset($tests[6]['pt3']) ? $tests[6]['pt3'] : '';
 	}	
 	if (intval($qty) == 3) {
-		$last = isset($tests[8]['lst']) ? $tests[8]['lst'] : '';
+		$last = isset($tests[8]['pt4']) ? $tests[8]['pt4'] : '';
 	}
 ?>
 
@@ -124,7 +124,7 @@
 							<div class="col-2"></div>
 							<div class="col-10" style="margin-left: -80px;">	
 								<textarea style="width:888px;" id="part-fg-last" name="part-fg-last" rows="1" onfocus="if (this.value=='  Last part ')this.value=''" 
-										onblur="if(this.value=='') this.value='  Last part '"  ><?= isset($last) ? $last : "  Last part "; ?></textarea>	
+										onblur="if(this.value=='') this.value='  Last part '"  ><?= $last ?></textarea>	
 							</div>
 						</div>
 					</div>

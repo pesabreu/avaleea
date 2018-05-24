@@ -19,21 +19,22 @@ class MY_Controller extends CI_Controller {
 		$var = $this->session->userdata("logged");
 		$logged = isset($var) ? $var : "0";
 		
+		//echo "<br /><br />My Controller => " .$logged. "<br />";
+		
+		
 		if ($external_questions && $logged != "3") {
 			$this->session->set_userdata("logged", '2');
 			$this->session->set_userdata("source", 'external_question');
-		}
-
-		$logged = $this->session->userdata("logged");		    
-        if (intval($logged) < 1 || intval($logged) > 3) {        				
-            redirect(base_url('login'));
-
-        } else {
-
-			$this->session->set_userdata("source", 'editing');
-        }
-             
-	 	error_reporting(FALSE);
+		
+		} else {	
+	        if ($logged != "1" && $logged != "3") {        				
+	            redirect(base_url('login'));
+	
+	        } else {	
+				$this->session->set_userdata("source", 'editing');
+	        }
+		}             
+	 	//error_reporting(FALSE);
     }
     
 }

@@ -2,6 +2,7 @@
 <?php
 	define("URL_IMG", "http://localhost/avaleea/includes/img/");
 	define("URL_UPL", "http://localhost/avaleea/uploads/");
+	//define("URL_UPL_QUESTIONS", "http://localhost/avaleea/uploads/temp_questions/");
 	
 	define("URL_IMG_REAL", "C:\\wamp64\\www\\avaleea\\includes\\img\\");	
 	define("URL_UPL_REAL", "C:\\wamp64\\www\\avaleea\\uploads\\");
@@ -15,8 +16,11 @@
 		        
         $logged = $CI->session->userdata("logged");        
 		$ret = TRUE;
+			
+		echo "<br /><br />__logged => " .$logged. "<br />";
 		
-        if ($logged < 1 || $logged > 2) {
+		
+        if ($logged != "1" && $logged != "3") {
             $ret = FALSE;	
             redirect(base_url('login'));
         }
@@ -587,7 +591,7 @@
 		}									
 	}
 			
-	function send_email_generall($data) {
+	function send_email_general($data) {
 		$CI =& get_instance();
 		
 		$in = $data['name_sender'];
@@ -679,9 +683,30 @@
 	
 	function renumber_questions_file() {
 		$CI =& get_instance();			
+	
+		$arquivo = $CI->session->userdata("name_file");	
+			
+		if (trim($arquivo) == "") {
+			$r = $_COOKIE['avaleea'];
+			$ret = isset($r) ? $_COOKIE['avaleea'] : FALSE;
+			if ($ret) {
+				$cookie = unserialize($ret);
+				$arquivo = $cookie['name_file'];
+				$logged = $cookie['logged'];	
+			}
+		}		
 
-		$arquivo = $CI->session->userdata("name_file");			
+        if ( trim($arquivo) == "" ) {
+        	echo "<br /><br /> não tem nome arquivo <br /><br />";
+            return FALSE;
+        }
+		
 		$file = file(URL_UPL_QUESTIONS.$arquivo); 			// Lê todo o arquivo para um vetor 
+
+        if ( ! $file ) {
+			echo "<br /><br /> não achou arquivo <br /><br />";
+            return FALSE;
+        }
 
 		$i = 0;
 	    foreach($file as $k => $linha) {					// passa linha a linha do arquivo 
@@ -697,7 +722,7 @@
 		     	 
     	file_put_contents(URL_UPL_QUESTIONS.$arquivo, $file);		// Reescrevendo o arquivo	
 
-		$CI->session->set_userdata("save_questions_external", $i);
+		$CI->session->set_userdata("quantity", $i);
 
 		return TRUE;
 	}
